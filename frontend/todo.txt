@@ -1,0 +1,11 @@
+profile images set krni hai on click on profile pic -- to picture enlarge  on click on div or in div to profile dashboard open 
+
+landing page banana hai --- done
+
+  friend suggestion m wo log na aaye jo already friend hai ye dekhna padega little bit advance 
+// baki kuch bhi aayega dimmag m to sochenge 
+
+// profile pic handling 
+only so no need of extra login page goin to remove that  email based login 
+15--ko deploy kr dunga 
+20 tk -vc ko bhi deploy 
