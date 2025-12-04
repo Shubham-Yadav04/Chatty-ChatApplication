@@ -18,18 +18,18 @@ function Suggestion() {
     },[])
   return (
     // this will contain the suggestion of the user with whom user can connect 
-    <motion.div className='w-fit h-screen flex flex-col pt-4 px-2 text-black overflow-auto gap-3 '
-initial={{opacity:0 ,x:-50}} animate={{opacity:1,x:0}} transition={{duration:0.2
+    <motion.div className='w-fit h-screen flex flex-col pt-4 text-black overflow-auto gap-3 '
+initial={{opacity:0 ,y:-10}} animate={{opacity:1,y:0}} transition={{duration:0.7
 }}
     >
-        <h1 className='text-3xl p-2 md:text-[1.25rem] font-bold text-black'>Add Friends</h1>
+        <h1 className='text-3xl px-2 md:text-[1.25rem] font-bold text-black'>Add Friends</h1>
     {
         suggestions && suggestions.length > 0 ? 
         suggestions.map((s, index) => 
             <Profiles key={index} username={s.username} userId={s.userId} profilePic={s.profilePic} />
         ) 
         : 
-        "No suggestions right now"
+        <div className='text-semibold px-3 text-sm'>No suggestions right now</div>
     }
 
     </motion.div>

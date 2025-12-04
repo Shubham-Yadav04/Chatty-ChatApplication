@@ -12,14 +12,14 @@ function UserCreationBox() {
   // console.log(`page-container-${location.pathname}`)
   
   return (
-    <BackgroundBeamsWithCollision children={<UserCreationBoxWrapper/>}/>
+   <UserCreationBoxWrapper/>
   )
 }
 function UserCreationBoxWrapper() {
   return(
- <div className='flex justify-center flex-col items-center h-screen w-screen  overflow-hidden relative'>
-<Link to="/" className='bg-gradient-to-br !from-blue-400 !to-red-500  !bg-clip-text !text-transparent absolute left-5 top-5 text-4xl cursor-pointer font-bold z-10' onClick={()=>console.log("clicked")}> CHeTTy</Link>
-<div  className='flex flex-col justify-center items-center h-fit  py-2 px-5 gap-4  rounded-lg shadow-sm shadow-purple-500 w-[400px] min-w-[300px]'>
+ <div className='flex justify-center flex-col items-center h-screen w-screen  overflow-hidden relative bg-gradient-to-tr from-[#222] to-transparent'>
+<Link to="/" className='bg-gradient-to-br !from-blue-400 !to-red-500  !bg-clip-text !text-transparent absolute left-5 top-5 text-4xl cursor-pointer font-bold z-10' onClick={()=>console.log("clicked")}>CHeTTy</Link>
+<div  className='flex flex-col justify-center items-center h-fit  py-2 px-5 gap-4  rounded-lg  shadow-md shadow-neutral-700 w-[400px] min-w-[300px] backdrop-blur-sm bg-gradient-to-tr from-[#111] to-transparent '>
               <Link to="/" className="md:text-4xl text-lg font-bold italic underline-none cursor-pointer z-10 " onClick={()=>console.log("clicked")}><EncryptedText
           text="CHeTTy"
           encryptedClassName="text-neutral-500"

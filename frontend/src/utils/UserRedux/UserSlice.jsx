@@ -39,7 +39,8 @@ const userSlice = createSlice({
     user: null,
    chatroom:[],
    currentChatRoom:null,
-   currentChatRoomMsg:[]
+   currentChatRoomMsg:[],
+   isChatOpened:false,
   },
   reducers: {
     setUser: (state, action) => {
@@ -47,6 +48,10 @@ const userSlice = createSlice({
     },
     setChatroom: (state, action) => {
       state.chatroom = [...state.chatroom, action.payload];
+    },
+    setIsChatOpened:(state,action)=>{
+      console.log(action.payload)
+      state.isChatOpened=action.payload
     },
     setCurrentChatRoom: (state, action) => {
       state.currentChatRoom = action.payload;
@@ -69,5 +74,5 @@ state.currentChatRoomMsg= action.payload
 });
 
 
-export const { setUser ,setChatroom,setCurrentChatRoom,setCurrentChatRoomMsg,addNewMessageToCurrentChatRoomMsg} = userSlice.actions;
+export const { setUser ,setChatroom,setCurrentChatRoom,setCurrentChatRoomMsg,addNewMessageToCurrentChatRoomMsg,isChatOpened,setIsChatOpened} = userSlice.actions;
 export default userSlice.reducer;

@@ -1,6 +1,6 @@
 export const AddFriendsIcon = () => (
     <svg
-      className="w-6 h-6 text-gray-600"
+      className="w-8 h-8 text-gray-600"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"

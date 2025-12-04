@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { useCurrentChat } from "../utils/CurrentChatContext";
 import { UserIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import {  setIsChatOpened} from "../utils/UserRedux/UserSlice.jsx"
+import { useDispatch } from "react-redux";
 function ChatSection() {
   const [message, setMessage] = useState("");
   const user = useSelector((state) => state.user).user;
@@ -10,11 +12,12 @@ function ChatSection() {
   const currentChatRoomMsg = useSelector(
     (state) => state.user.currentChatRoomMsg
   );
+const isChatOpened=useSelector(state=>state.user.isChatOpened)
   const [isMenuClicked, setIsMenuClicked] = useState(false);
-
+const dispatch= useDispatch()
   const chatEndRef = useRef(null); // Reference to the chat container for auto-scrolling
-console.log(receiverProfile)
-console.log(user)
+// console.log(receiverProfile)
+// console.log(user)
   const handleSendMessage = () => {
     // Message send logic
     let receiverName = receiverProfile.username;
@@ -22,7 +25,7 @@ console.log(user)
     const senderId=user.userId;
     const senderName = user.username;
     const content = message;
-console.log("sending the message")
+// console.log("sending the message")
     addMessages({ senderId, receiverId, senderName, receiverName, content });
     setMessage(""); // clear the input field
   };
@@ -31,17 +34,19 @@ console.log("sending the message")
   const sortedMessages = [...currentChatRoomMsg]?.sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
-
+const handleBack=()=>{
+  dispatch(setIsChatOpened(false));
+}
   // Scroll to the bottom whenever the messages change
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+      
     }
   }, [currentChatRoomMsg]); // This will trigger whenever currentChatRoomMsg changes
 
   return (
-    <div className="hidden w-full md:w-[75%] h-screen md:flex flex-col p-5 pb-1 gap-5 overflow-hidden" onClick={(e)=>{
-      
+    <div className={`${isChatOpened?"sm:flex":"hidden"} w-full md:w-[75%] h-screen  md:flex flex-col p-5 pb-1 gap-5 overflow-hidden`} onClick={(e)=>{
       setIsMenuClicked(false)
       console.log("cliecked")
     }}
@@ -52,6 +57,22 @@ console.log("sending the message")
             {/* header section */}
             <div className="header w-[100%] flex flex-row  z-40 bg-gray-200 h-[60px] items-center absolute inset-0">
               <div className="h-full w-full flex flex-row justify-start items-start">
+                <div className="flex items-start md:hidden justify-center h-full w-[50px] cursor-pointer hover:bg-gray-300 rounded-lg transition" onClick={handleBack}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-6 h-6 text-black"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 19.5L8.25 12l7.5-7.5"
+                    />
+                  </svg>
+                </div>
                 <div className="rounded-full  flex items-center justify-center h-[50px] overflow-hidden w-[50px] border-2 border-gray-300 bg-white">
                    {  receiverProfile.profilePic? <img
           src={receiverProfile.profilePic}
@@ -63,7 +84,7 @@ console.log("sending the message")
       
     }
                 </div>
-                <h1 className="text-base font-bold text-black pl-4">
+                <h1 className="text-base font-bold text-black pl-4 pt-3">
                   {receiverProfile.username}
                 </h1>
               </div>
@@ -192,7 +213,7 @@ console.log("sending the message")
           </div>
         </>
       ) : (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="hidden md:w-full h-full flex justify-center items-center">
           <h1 className="text-[1.5rem] font-bold text-black">WELCOME</h1>
         </div>
       )}

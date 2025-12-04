@@ -9,13 +9,13 @@ import {
   Share2Icon,
   SettingsIcon
 } from "lucide-react";
-import axios from 'axios'
-import {motion} from 'motion/react'
-import { LogOut } from "lucide-react";
-import { useNavigate } from 'react-router-dom'
-import {useWebSocket} from "../utils/WebSocketContext"
-import {useDispatch} from "react-redux"
-import {setUser} from "../utils/UserRedux/UserSlice"
+// import axios from 'axios'
+// import {motion} from 'motion/react'
+// import { LogOut } from "lucide-react";
+// import { useNavigate } from 'react-router-dom'
+// import {useWebSocket} from "../utils/WebSocketContext"
+// import {useDispatch} from "react-redux"
+// import {setUser} from "../utils/UserRedux/UserSlice"
 const settingsOptions = [
   { icon: <LockIcon size={20} className="text-gray-500" />, label: "Account" },
   { icon: <SettingsIcon size={20} className="text-gray-500" />, label: "Privacy" },
@@ -28,21 +28,6 @@ const settingsOptions = [
 const SettingPage = () => {
 
 
-  const {disconnectWebSocket} = useWebSocket()
-  const Navigate=useNavigate()
-  const dispatch= useDispatch()
-  const handleLogout=async()=>{
-    console.log("Logout clicked")
-const response= await axios.get("http://localhost:8080/user/logout",{
-  withCredentials:true,
-})
-console.log(response.data)
-disconnectWebSocket()
-if(response.data.Authenticated==="false"){
-dispatch(setUser(null));
-  Navigate('/')
-  }
-}
   const user=useSelector((state) => state.user).user;
   return (
     <motion.div className="w-full h-screen bg-gray-200  flex flex-col"initial={{opacity:0 ,x:-50}} animate={{opacity:1,x:0}} transition={{duration:0.2
@@ -76,15 +61,15 @@ dispatch(setUser(null));
             </div>
           </button>
         ))}
-          <button
+          {/* <button
             className="flex items-center justify-between px-4 py-3  bg-gray-200 hover:bg-red-200  hover:outline hover:outline-2 hover:outline-red-500 focus:outline-red-500"
           onClick={()=> handleLogout()}
           >
             <div className="flex items-center gap-4" onClick={()=> handleLogout()}>
-            <LogOut size={20} className="text-red-700"/>
+            
               <span className="text-red-600">LogOut</span>
             </div>
-          </button>
+          </button> */}
       </div>
 
     </motion.div>

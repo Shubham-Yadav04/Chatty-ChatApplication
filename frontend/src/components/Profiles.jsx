@@ -4,8 +4,8 @@ import { UserIcon } from 'lucide-react';
 
 import { useWebSocket } from '../utils/WebSocketContext.jsx';
 import { useDispatch } from 'react-redux';
-import { setCurrentChatRoom } from '../utils/UserRedux/UserSlice.jsx';
-import { addNewMessageToCurrentChatRoomMsg } from '../utils/UserRedux/UserSlice.jsx';
+import { isChatOpened, setCurrentChatRoom } from '../utils/UserRedux/UserSlice.jsx';
+import { addNewMessageToCurrentChatRoomMsg,setIsChatOpened } from '../utils/UserRedux/UserSlice.jsx';
 function Profiles(props) {
     const { setReceiverProfile } = useCurrentChat();
    const dispatch= useDispatch();
@@ -21,10 +21,10 @@ if(props.roomId && stompClient){
         dispatch(addNewMessageToCurrentChatRoomMsg(msg));
       })
 }
+dispatch(setIsChatOpened(true));
 dispatch(setCurrentChatRoom(props))
-   }
 
-  
+   }
   return (
     <div className='w-full h-[50px] flex p-4 md:px-4  justify-start gap-3 hover:cursor-pointer' onClick={() => handleProfileSelection(props)}>
         <div className='rounded-full  md:h-[40px] md:w-[40px] w-[50px] h-[50px] flex items-center justify-center border-2 border-gray-300  overflow-hidden '>
@@ -44,9 +44,7 @@ dispatch(setCurrentChatRoom(props))
         
             <p className='text-sm md:text-xs font-[500] leading-none  text-black leading-snug truncate w-full text-black text-ellipsis'>
                 {
-                    props.msg
-                    // if the current message is greater than the length of 20 characters, then we will show the first 20 characters of the message and then add "..." at the end of the message if there are multiple messages we will show x number of new messages 
-                   
+                    props.msg       
                 }
       
             </p>
