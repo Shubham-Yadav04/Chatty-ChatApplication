@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
+
 @Repository
 public interface UserRepository extends JpaRepository<User,String> {
 
@@ -17,5 +19,6 @@ public interface UserRepository extends JpaRepository<User,String> {
      User getUserByEmail(@Param("email") String email);
     @Query(value = "SELECT * FROM user WHERE email != :email ORDER BY RAND() LIMIT :limit", nativeQuery = true)
      List<User> findRandomUsersExcludingUsername(@Param("email") String username, @Param("limit") int limit);
-
+    @Query("SELECT u FROM User u WHERE u.email LIKE CONCAT(:email, '%')")
+    List<User> findQuerySearch(@Param("email") String email);
 }

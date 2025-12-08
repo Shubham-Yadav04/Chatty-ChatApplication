@@ -24,12 +24,12 @@ if(user){
     > Loading ....</motion.div>
     
     :
-     <motion.div className='w-full h-full flex flex-col pt-4'
+     <motion.div className='w-full h-full flex flex-col pt-4 px-3'
       initial={{opacity:0 ,y:-10}} animate={{opacity:1,y:0}} transition={{duration:.7}}
       >
       <h1 className='text-4xl  md:text-[3vw] font-bold text-black px-4'>Chats</h1>
       <div className='h-fit py-4 overflow-y-auto overflow-x-hidden flex flex-col gap-3'>
-        <Profiles username={"Myself"} msg={"hi billionaire what's the pln"} />
+        <Profiles username={"Myself"} msg={"hi billionaire what's the pln"} profilePic={user.profilePic} />
       {
     chatroom
       ?chatroom.map((chatProfile, index) => {
