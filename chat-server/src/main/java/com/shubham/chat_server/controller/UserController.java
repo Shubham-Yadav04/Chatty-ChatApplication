@@ -28,8 +28,8 @@ public class UserController {
     @Autowired
     MessageServices messageServices;
 
-    @Autowired
-    Cloudinary cloudinary;
+//    @Autowired
+//    Cloudinary cloudinary;
     @GetMapping("/authenticated/user")
     public User getAuthenticatedUser(@CookieValue("access_token") String token){
         String email= jwtService.extractToken(token).getSubject();
@@ -171,7 +171,7 @@ public class UserController {
     @PutMapping("/user/change-bio")
     public ResponseEntity<?> updateBio(
             @RequestParam("userId") String userId,
-            @RequestParam("newName") String newBio ) {
+            @RequestParam("newBio") String newBio ) {
 
         try {
           String str = userService.updateBio(userId,newBio);

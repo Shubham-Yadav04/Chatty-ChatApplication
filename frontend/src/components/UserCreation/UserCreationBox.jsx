@@ -7,12 +7,20 @@ import { EncryptedText } from "@/components/ui/encrypted-text";
 import { BackgroundBeamsWithCollision } from '../ui/background-beams-with-collision';
 import Login from './Login';
 import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 function UserCreationBox() {
-  // const location= useLocation();
-  // console.log(`page-container-${location.pathname}`)
-  
+  const user= useSelector(state=>state.user).user;
+  const navigate= useNavigate();
+ useEffect(()=>{
+  console.log(user)
+  if(user){
+    navigate('/home')
+  }
+ },[user])
   return (
-   <UserCreationBoxWrapper/>
+   <UserCreationBoxWrapper/> 
   )
 }
 function UserCreationBoxWrapper() {

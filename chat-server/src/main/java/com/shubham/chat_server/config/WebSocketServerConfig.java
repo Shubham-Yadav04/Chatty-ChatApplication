@@ -17,7 +17,7 @@ public class WebSocketServerConfig implements WebSocketMessageBrokerConfigurer{
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
        registry.enableSimpleBroker("/topic","/queue");
-         registry.setApplicationDestinationPrefixes("/message"); // client will send the message to this  and the action on this route will be handled by the server in the controller
+         registry.setApplicationDestinationPrefixes("/message","/typing"); // client will send the message to this  and the action on this route will be handled by the server in the controller
          registry.setUserDestinationPrefix("/user"); // user specific route for a specific user based on the user id or the username
     }
 }

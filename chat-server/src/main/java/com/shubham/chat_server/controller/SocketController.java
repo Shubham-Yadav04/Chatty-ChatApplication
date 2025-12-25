@@ -1,10 +1,7 @@
 package com.shubham.chat_server.controller;
 
-import com.shubham.chat_server.model.ChatRoom;
-import com.shubham.chat_server.model.Message;
-import com.shubham.chat_server.model.MessageStatus;
+import com.shubham.chat_server.model.*;
 
-import com.shubham.chat_server.model.ReceivedMessage;
 import com.shubham.chat_server.services.ChatRoomServices;
 import com.shubham.chat_server.services.MessageServices;
 import com.shubham.chat_server.services.UserService;
@@ -53,8 +50,16 @@ public class SocketController {
        }
 
     }
+
+    @MessageMapping("/queue")
+    public void typingStatus(@Payload TypingStatus typingStatus){
+        System.out.println("in the message :"+typingStatus.getChatroomId());
+        String chatroomId= typingStatus.getChatroomId();
+        simpleMessagingTemplate.convertAndSend("/queue/typing-status/"+chatroomId,typingStatus);
+    }
     @MessageMapping("/private-message/{receiverId}")
     public void sendPrivateMessage(@Payload Message message, Principal sender){
         simpleMessagingTemplate.convertAndSendToUser(message.getReceiver().getUsername(),"/queue/message", message);
     }
 }
+    

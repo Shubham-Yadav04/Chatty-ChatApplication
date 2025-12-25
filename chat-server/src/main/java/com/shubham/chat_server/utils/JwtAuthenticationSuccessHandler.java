@@ -33,7 +33,7 @@ public class JwtAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
         // Correct way to get OAuth2 User
 
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        System.out.println("....." +  oauth2User.toString());
+//        System.out.println("....." +  oauth2User.toString());
 User user = new User();
 user.setUsername(oauth2User.getAttribute("name"));
 user.setEmail(oauth2User.getAttribute("email"));

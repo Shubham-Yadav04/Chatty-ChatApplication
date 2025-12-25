@@ -1,0 +1,20 @@
+spring.application.name=chat-server
+#  google authentication
+ spring.security.oauth2.client.registration.google.client-id= XXXXXXXXXXXXX
+ spring.security.oauth2.client.registration.google.client-secret=XXXXXXXXXXXXXXXX
+ spring.security.oauth2.client.registration.google.scope=openid, profile, email
+# # github authentication
+
+# spring.security.oauth2.client.registration.github.client-id=XXXXXXXXXXXX
+# spring.security.oauth2.client.registration.github.client-secret=XXXXXXXXXXXXXXX
+#spring.security.oauth2.client.registration.github.client-scope=XXXXXXXXXXXXXX
+#Database configuration
+
+spring.datasource.url=jdbc:
+spring.datasource.username=XXXXXXXXXXXXXXX
+spring.datasource.password=XXXXXXXXXXXX
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+

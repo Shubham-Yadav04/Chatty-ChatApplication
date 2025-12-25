@@ -10,7 +10,6 @@ import {  setCurrentChatRoomMsg } from "./UserRedux/UserSlice";
 const getCurrentChatMessages = async (chatroom) => {
   const response = await axios.get(
     `http://localhost:8080/chatroom/messages/${chatroom.roomId}`,
-
     { withCredentials: true }
   );
   return response.data;
@@ -42,8 +41,8 @@ export const CurrentChatProvider = ({ children }) => {
   async function addMessages(msg) {
     // check whether the chatroom is new or it has already created if already created then the props will have roomId
     //  if room id is present than publish the message to the roomId route
-    console.log(msg);
-    if(msg.recievername)
+    console.log(receiverProfile);
+ 
     if (!receiverProfile.roomId) {
       // it will make a request to the server to create a new chatroom and then using the current messages data and give the roomId as a response
       // here we will get the roomId
@@ -52,7 +51,7 @@ export const CurrentChatProvider = ({ children }) => {
         msg,
         { withCredentials: true }
       );
-
+console.log("mssdamd")
       if (response.data) {
         // dispatch(fetchChatrooms(user.userId));
 

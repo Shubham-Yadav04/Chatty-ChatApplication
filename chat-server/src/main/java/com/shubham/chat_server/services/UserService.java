@@ -1,30 +1,22 @@
 package com.shubham.chat_server.services;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.shubham.chat_server.model.Message;
+
 import com.shubham.chat_server.model.User;
 import com.shubham.chat_server.repository.UserRepository;
-import com.shubham.chat_server.utils.CloudinaryConfig;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 
 @Service
 public class UserService {
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    Cloudinary cloudinary;
 //   @Autowired
 //PasswordEncoder passwordEncoder;
 

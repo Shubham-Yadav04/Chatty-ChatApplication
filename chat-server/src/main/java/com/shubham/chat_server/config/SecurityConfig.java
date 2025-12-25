@@ -46,8 +46,10 @@ public class SecurityConfig {
                 )
                 .formLogin(login->login.disable())
                 .oauth2Login(oauth -> oauth.successHandler(jwtAuthenticationSuccessHandler)
+                        .failureUrl("http://localhost:5173/login")
 
                 )
+
 
  .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

@@ -71,8 +71,7 @@ useEffect(() => {
 
 const handleUpdate = async (field) => {
  if(field==="bio"){
-  const res= await axios.post(`${import.meta.env.VITE.BACKEND_URI}user/change-bio?userId=${user.userId}&newBio=${formData.bio}`,
-    
+  const res= await axios.put(`${import.meta.env.VITE_BACKEND_URI}user/change-bio?userId=${user.userId}&newBio=${formData.bio}`,{},
     {
       withCredentials:true
     }
@@ -80,13 +79,13 @@ const handleUpdate = async (field) => {
   console.log(res)
  }
  else if(field==='username'){
-  const res= await axios.post(`${import.meta.env.VITE.BACKEND_URI}user/change-name?userId=${user.userId}&newName=${formData.username}`,
+  const res= await axios.put(`${import.meta.env.VITE_BACKEND_URI}user/change-name?userId=${user.userId}&newName=${formData.username}`,{},
     {
       withCredentials:true
     }
   ) 
   console.log(res.data);
-user.profilePic=res.data.profilePic
+
  }
   setEditingField(null);
 };
@@ -138,11 +137,11 @@ return (
             <UserIcon size={20} className="text-indigo-600" />
             <label className='text-lg md:text-xl font-semibold text-gray-800'>Name</label>
             {editingField !== 'username' && (
-              <Edit3 size={18} className="text-gray-400 cursor-pointer ml-auto" onClick={() => setEditingField('username')} />
+              <Edit3 size={18} className="text-gray-400 cursor-pointer ml-auto mr-4" onClick={() => setEditingField('username')} />
             )}
           </div>
           {editingField === 'username' ? (
-            <div className='flex flex-col gap-2 w-full'>
+            <div className='flex flex-col gap-2 w-full text-black'>
               <input
                 type="text"
                 name="username"
@@ -166,17 +165,17 @@ return (
               </div>
             </div>
           ) : (
-            <p className='text-base md:text-lg text-gray-700 font-medium'>{user?.username || 'username'}</p>
+            <p className='text-base md:text-lg text-gray-700 font-medium px-2'>{user?.username || 'username'}</p>
           )}
         </div>
 
         {/* Bio */}
-        <div className='flex flex-col gap-3'>
+        <div className='flex flex-col gap-3 text-black'>
           <div className='flex items-center gap-2'>
             <MessageSquare size={20} className="text-indigo-600" />
             <label className='text-lg md:text-xl font-semibold text-gray-800'>Bio</label>
             {editingField !== 'bio' && (
-              <Edit3 size={18} className="text-gray-400 cursor-pointer ml-auto" onClick={() => setEditingField('bio')} />
+              <Edit3 size={18} className="text-gray-400 cursor-pointer ml-auto mr-4" onClick={() => setEditingField('bio')} />
             )}
           </div>
           {editingField === 'bio' ? (
@@ -204,7 +203,7 @@ return (
               </div>
             </div>
           ) : (
-            <p className='text-base md:text-lg text-gray-700 font-medium'>{user?.bio || 'Add your bio'}</p>
+            <p className='text-base md:text-lg text-gray-700 font-medium px-2'>{user?.bio || 'Add your bio'}</p>
           )}
         </div>
       </div>

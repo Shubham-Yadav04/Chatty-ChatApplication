@@ -1,16 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
-import Login from './components/UserCreation/Login';
 import Home from './components/Home';
 
 import UserCreationBox from './components/UserCreation/UserCreationBox';
 import Landing from './components/landingPage/Landing'
-import SignUp from './components/UserCreation/SignUp';
+import { getUserFromUserId ,setUser} from './utils/UserRedux/UserSlice'
 import UserProfileDashboard from './components/dashbaord/UserProfileDashBoard';
+import { useDispatch } from 'react-redux';
 function App() {
-
- 
+const dispatch= useDispatch();
+ useEffect(()=>{
+   dispatch(getUserFromUserId());
+ },[])
   return (
       <Routes>
         <Route path="/" element={<Landing/>} />
