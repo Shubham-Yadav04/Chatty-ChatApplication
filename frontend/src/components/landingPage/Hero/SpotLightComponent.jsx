@@ -18,16 +18,16 @@ export function SpotlightComponent() {
       <div className="relative z-10 mx-auto w-full max-w-8xl p-4 pt-20 md:pt-0 flex flex-col items-center">
         <h1
           className="bg-opacity-30 bg-gradient-to-b from-neutral-50 to-neutral-20 bg-clip-text text-center text-4xl font-bold text-transparent md:text-7xl">
-          Chetty <br /> is the new trend.
+          Chatty <br /> is the new trend.
         </h1>
         <p
           className="mx-auto mt-4 max-w-xl text-center text-sm md:text-base font-normal text-neutral-400">
-          Chetty  is a great way to connect with loved Ones or make friends across the world.
+          Chatty  is a great way to connect with loved Ones or make friends across the world.
           Here, we are drawing the attention towards best experiences.
         </p>
 <h1 className="md:text-base font-bold w-full text-center mt-3 text-xs antialiased ">
    Let's Do <span className="md:text-xl  text-sm   "><EncryptedText
-        text={" CHETTi**ap."}
+        text={" CH*TTi**ap."}
          encryptedClassName="text-neutral-500"
         revealedClassName="dark:text-white text-black"
         revealDelayMs={100}

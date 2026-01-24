@@ -66,7 +66,7 @@ export function InfoDetails() {
     },
   ];
   return (
-    <div className="relative w-full overflow-clip h-fit">
+    <div id="About" className="relative w-full overflow-clip h-fit">
       <Timeline data={data} />
     </div>
   );
