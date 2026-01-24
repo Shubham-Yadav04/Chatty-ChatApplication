@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -21,6 +22,8 @@ public class JwtAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
     private  JwtService jwtService;
 @Autowired
     UserService userService;
+@Value("${Frontend_URI}")
+public String Frontend_URI;
 //
 //    public JwtAuthenticationSuccessHandler(JwtService jwtService) {
 //        this.jwtService = jwtService;
@@ -68,7 +71,7 @@ Cookie authenticated= new Cookie("authenticated","true");
     response.addCookie(userId);
 
 
-response.sendRedirect("http://localhost:5173/home");
+response.sendRedirect(Frontend_URI+"home");
 
     }
 
