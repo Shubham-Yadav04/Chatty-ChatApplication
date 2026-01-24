@@ -28,8 +28,10 @@ public class UserController {
     @Autowired
     MessageServices messageServices;
 
-//    @Autowired
-//    Cloudinary cloudinary;
+    @GetMapping("/health-check")
+    public String healthCheck(){
+        return "Success controllers active";
+    }
     @GetMapping("/authenticated/user")
     public User getAuthenticatedUser(@CookieValue("access_token") String token){
         String email= jwtService.extractToken(token).getSubject();
