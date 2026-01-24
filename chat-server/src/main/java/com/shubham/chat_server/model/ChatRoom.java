@@ -36,10 +36,8 @@ private Boolean isGroupChat=false;
 @JsonManagedReference
     private List<Message> messages;
 @Temporal(TemporalType.TIMESTAMP)
-
     @Column
     private Date createdAt= new Date();
-
 @OneToOne
 private Message lastMessage;
 }

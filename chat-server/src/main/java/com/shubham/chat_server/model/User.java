@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.UUID)
@@ -31,13 +32,6 @@ public class User {
     private String profilePic;
 @Column
 private String bio;
-//    @OneToMany(mappedBy = "sender")
-//    private List<Message> messagesSent;
-//
-//    @OneToMany(mappedBy = "receiver")
-//    private List<Message> messagesRecieved;
-
-
     @Enumerated(EnumType.STRING)
     private Status status;
 
