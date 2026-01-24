@@ -24,7 +24,7 @@ function Home() {
   const dispatch = useDispatch();
   const isChatOpened = useSelector((state) => state.user.isChatOpened);
   //   const checkAuth=async()=>{
-  // await axios.get("http://localhost:8080/check/auth",{
+  // await axios.get("${import.meta.env.VITE_BACKEND_URI}check/auth",{
   //   withCredentials:true
   // })
   //   }
@@ -34,7 +34,7 @@ function Home() {
   const user = useSelector((state) => state.user).user;
   const handleLogout = async () => {
     console.log("Logout clicked");
-    const response = await axios.get("http://localhost:8080/user/logout", {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}user/logout`, {
       withCredentials: true,
     });
     console.log(response.data);

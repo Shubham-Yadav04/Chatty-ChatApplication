@@ -18,7 +18,7 @@ export const WebSocketProvider = ({ children }) => {
   const connectWebSocket = () => {
     if (connected || stompClient) return; 
 
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS(`${import.meta.env.VITE_BACKEND_URI}ws`);
 
     const client = new Client({
       webSocketFactory: () => socket,

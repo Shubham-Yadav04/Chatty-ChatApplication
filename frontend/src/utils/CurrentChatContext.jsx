@@ -9,7 +9,7 @@ import {  setCurrentChatRoomMsg } from "./UserRedux/UserSlice";
 
 const getCurrentChatMessages = async (chatroom) => {
   const response = await axios.get(
-    `http://localhost:8080/chatroom/messages/${chatroom.roomId}`,
+    `${import.meta.env.VITE_BACKEND_URI}chatroom/messages/${chatroom.roomId}`,
     { withCredentials: true }
   );
   return response.data;
@@ -47,7 +47,7 @@ export const CurrentChatProvider = ({ children }) => {
       // it will make a request to the server to create a new chatroom and then using the current messages data and give the roomId as a response
       // here we will get the roomId
       const response = await axios.post(
-        "http://localhost:8080/create.room",
+        `${import.meta.env.VITE_BACKEND_URI}create.room`,
         msg,
         { withCredentials: true }
       );
@@ -84,7 +84,7 @@ console.log("mssdamd")
 
     // now while delete messages the messages will only be removed for the client not for the server the message will still be in the server for the other person
     await axios.post(
-      "http://localhost:8080/message/delete",
+      `${import.meta.env.VITE_BACKEND_URI}message/delete`,
       {
         sender: user.username,
         reciever: receiverProfile.username,

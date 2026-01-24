@@ -16,7 +16,7 @@ const user= useSelector(state=>state.user.user)
     const getSearchResult = async (query) => {
         try {
             const response = await axios.get(
-                `http://localhost:8080/user/search/email/${query}`,
+                `${import.meta.env.VITE_BACKEND_URI}user/search/email/${query}`,
                 { withCredentials: true }
             );
             setSuggestions(response.data);
