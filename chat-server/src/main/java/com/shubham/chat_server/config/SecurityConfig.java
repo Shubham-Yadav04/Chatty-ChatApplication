@@ -43,7 +43,7 @@ public String Frontend_URI;
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers( "/oauth2/authorization/**","/auth/**","/ws/**").permitAll()
-                        .requestMatchers("/login/auth").permitAll()
+                        .requestMatchers("/login/auth","/health-check").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login->login.disable())
