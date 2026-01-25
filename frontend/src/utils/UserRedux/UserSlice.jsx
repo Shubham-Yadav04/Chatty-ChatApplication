@@ -6,7 +6,7 @@ export const getUserFromUserId = createAsyncThunk(
   async ( thunkAPI) => {
     try {
     
-      const response = await axios.get('http://localhost:8080/authenticated/user', {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}authenticated/user`, {
         withCredentials: true,
       });
 
@@ -22,7 +22,7 @@ export const fetchChatrooms = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       
-      const response = await axios.get(`http://localhost:8080/chatroom/user/${userId}`, {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}chatroom/user/${userId}`, {
         withCredentials: true,
       });
       
