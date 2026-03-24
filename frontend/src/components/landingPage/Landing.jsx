@@ -3,6 +3,7 @@ import HeroSection from './Hero/HeroSection'
 import Navbar from '../NavBar/Navbar'
 import Info from './Info/Info'
 import Footer from './footer/Footer'
+import DummyChat from './DummyChat/DummyChat'
 // import {useNavigate} from "react-router-dom"
 function Landing() {
     // const navigate= useNavigate();
@@ -14,6 +15,7 @@ function Landing() {
     <div className="h-fit w-full flex-col items-center neon:bg-primary dark:bg-[#000]">
         {/* <Navbar/> */}
         <HeroSection/>
+        <DummyChat/>
     <Info/>
     <Footer/>
     </div>

@@ -10,10 +10,28 @@ export const Timeline = ({
   const [height, setHeight] = useState(0);
 
   useEffect(() => {
+    let observer;
+    const updateHeight = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        setHeight(rect.height);
+      }
+    };
+    
+    updateHeight();
+    
     if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setHeight(rect.height);
+      observer = new ResizeObserver(() => {
+        updateHeight();
+      });
+      observer.observe(ref.current);
     }
+    
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   }, [ref]);
 
   const { scrollYProgress } = useScroll({
@@ -37,28 +55,28 @@ export const Timeline = ({
           Experience the joy of seamless communication with Chetty. Our platform is designed to bring you closer to your friends and family, making every conversation effortless and enjoyable.
         </p>
       </div>
-      <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
+      <div ref={ref} className="relative w-full max-w-7xl mx-auto pb-20">
         {data.map((item, index) => (
-          <div key={index} className="flex justify-start pt-10 md:pt-40 md:gap-10">
+          <div key={index} className="flex justify-center pt-10 md:pt-40 md:gap-10 w-full">
             <div
-              className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
+              className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start md:w-[45%] md:max-w-none">
               <div
                 className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-white dark:bg-black flex items-center justify-center">
                 <div
                   className="h-4 w-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 p-2" />
               </div>
-              <h3
-                className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-neutral-500 dark:text-neutral-500 ">
+              <div
+                className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-neutral-500 dark:text-neutral-500 w-full">
                 {item.title}
-              </h3>
+              </div>
             </div>
 
-            <div className="relative pl-20 pr-4 md:pl-4 w-full">
-              <h3
-                className="md:hidden block text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
+            <div className="relative pl-14 pr-4 md:pl-4 w-full md:w-[50%] flex flex-col justify-center">
+              <div
+                className="md:hidden block w-full flex items-center text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
                 {item.title}
-              </h3>
-              {item.content}{" "}
+              </div>
+              {item.content}
             </div>
           </div>
         ))}

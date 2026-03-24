@@ -7,7 +7,7 @@ import Navbar from "@/components/NavBar/Navbar";
 export function SpotlightComponent() {
   return (
     <div
-      className="relative flex flex-col md:h-screen h-[80vh] w-full overflow-hidden rounded-md bg-black/[0.96] antialiased md:items-center md:justify-center md:gap-[7rem] gap-5 p-2">
+      className="relative flex flex-col md:h-screen min-h-[50vh] h-auto w-full overflow-hidden rounded-md bg-black/[0.96] antialiased md:items-center md:justify-center md:gap-[7rem] gap-5 p-2 py-10 md:py-2">
         <Navbar/>
       <div
         className={cn(
