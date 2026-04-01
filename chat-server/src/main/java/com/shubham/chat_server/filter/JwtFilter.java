@@ -33,9 +33,7 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        System.out.println("inside the filter");
         Cookie[] cookies = request.getCookies();
-//        System.out.println(Arrays.toString(cookies));
   String access_token= null;
         String refresh_token= null;
         if(cookies!=null) {

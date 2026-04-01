@@ -71,7 +71,6 @@ public String Frontend_URI;
         configuration.setAllowedHeaders(List.of("*"));
 //        configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

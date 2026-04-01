@@ -12,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +34,12 @@ public class UserController {
     @GetMapping("/authenticated/user")
     public User getAuthenticatedUser(@CookieValue("access_token") String token){
         String email= jwtService.extractToken(token).getSubject();
-        System.out.println(email);
-        User user= userService.getUserByEmail(email);
-        return user;
+        try {
+            return userService.getUserByEmail(email);
+        }
+        catch(Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
     @PostMapping("/auth/signup")
     public ResponseEntity<?> createUser(@RequestBody User user){
@@ -111,28 +113,6 @@ public class UserController {
         }
         return  new ResponseEntity<>("ERROR",HttpStatusCode.valueOf(500));
     }
-//@Value("${cloudinary.api_secret}")
-//    private String apiSecret;
-//    @PostMapping("cloudinary/signature")
-//    public ResponseEntity<?> signature(@RequestBody Map<String,Object> req){
-//        try{
-//
-//            System.out.println(req.toString());
-//            long timestamp = System.currentTimeMillis() / 1000;
-//            Map<String ,Object> param= new HashMap<>();
-//            param.put("folder",req.get("folder"));
-//            param.put("timestamp",String.valueOf(timestamp));
-//            String sign=cloudinary.apiSignRequest(param, cloudinary.config.apiSecret);
-//            Map<String,Object> res= new HashMap<>();
-//            res.put("signature",sign);
-//            res.put("timestamp",timestamp);
-//            System.out.println(res.toString());
-//            return new ResponseEntity<>(res,HttpStatus.OK);
-//        } catch (RuntimeException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     @PostMapping("/user/change-profile")
     public ResponseEntity<?> uploadProfilePic(
             @RequestParam("userId") String userId,
