@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import Suggestion from "./Suggestion";
 import UserProfileDashboard from "./dashbaord/UserProfileDashBoard";
 import { UserIcon } from "./Svgs/UserIcon";
-import { SettingsIcon } from "./Svgs/SettingsIcon";
+
 import { MessageIcon } from "./Svgs/MessageIcon";
 import { AddFriendsIcon } from "./Svgs/AddFriendsIcon";
 import { setUser } from "../utils/UserRedux/UserSlice";
@@ -23,11 +23,6 @@ function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isChatOpened = useSelector((state) => state.user.isChatOpened);
-  //   const checkAuth=async()=>{
-  // await axios.get("${import.meta.env.VITE_BACKEND_URI}check/auth",{
-  //   withCredentials:true
-  // })
-  //   }
 
   const { disconnectWebSocket } = useWebSocket();
   const Navigate = useNavigate();
@@ -54,7 +49,14 @@ function Home() {
 
   return (
     <>
-      {loading ? (
+    {
+      user === null ?(
+        <div className=" w-screen h-screen bg-gray-200 flex items-center justify-center">
+          <p className="text-xl text-gray-700">User not authenticated. Please log in.</p> 
+        </div>
+      )   
+:  
+      loading ? (
         <div className=" w-screen h-screen bg-gray-200">
           <p>Loading...</p>
         </div>
@@ -142,7 +144,8 @@ function Home() {
           </motion.div>
           <ChatSection />
         </div>
-      )}
+      )
+    }
     </>
   );
 }

@@ -68,8 +68,14 @@ state.currentChatRoomMsg= action.payload
     builder.addCase(getUserFromUserId.fulfilled, (state, action) => {
       state.user = action.payload;
     })
+    .addCase(getUserFromUserId.rejected, (state, action) => {
+      state.user = null;
+    })
     .addCase(fetchChatrooms.fulfilled, (state, action) => {
       state.chatroom = action.payload;
+    })
+    .addCase(fetchChatrooms.rejected, (state, action) => {
+      state.chatroom = [];
     });
   },
 });

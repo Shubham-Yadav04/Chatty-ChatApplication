@@ -10,7 +10,7 @@ function App() {
 const dispatch= useDispatch();
  useEffect(()=>{
    dispatch(getUserFromUserId());
- },[])
+ },[dispatch])
   return (
       <Routes>
         <Route path="/" element={<Landing/>} />
