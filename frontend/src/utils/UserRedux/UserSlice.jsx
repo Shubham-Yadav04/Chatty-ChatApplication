@@ -9,9 +9,10 @@ export const getUserFromUserId = createAsyncThunk(
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}authenticated/user`, {
         withCredentials: true,
       });
-
+console.log(response.data)
       return response.data;
     } catch (error) {
+console.error("Error fetching user:", error);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
