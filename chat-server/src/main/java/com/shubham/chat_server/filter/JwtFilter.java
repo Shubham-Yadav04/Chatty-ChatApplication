@@ -10,8 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 
 @Component
@@ -51,12 +54,14 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
                 String email = jwtService.extractToken(refresh_token).getSubject();
                 String newAccess_token = jwtService.generateToken(email, 1000 * 60 * 60);
-                Cookie access_cookie = new Cookie("access_token", newAccess_token);
-                access_cookie.setSecure(true);
-                access_cookie.setPath("/");
-                access_cookie.setHttpOnly(true);
-                access_cookie.setMaxAge(1000 * 60 * 60);
-                response.addCookie(access_cookie);
+                ResponseCookie access_cookie =ResponseCookie.from("access_toke",newAccess_token)
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite("None")
+                        .path("/")
+                        .maxAge(Duration.ofMinutes(60))
+                        .build();
+                response.addHeader(HttpHeaders.SET_COOKIE,access_cookie.toString());
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }

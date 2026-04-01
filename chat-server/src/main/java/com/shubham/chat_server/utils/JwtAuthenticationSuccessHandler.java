@@ -9,11 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
+import java.time.Duration;
 
 @Component
 public class JwtAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -47,30 +50,47 @@ User createdUser=userService.createUser(user);
         String jwtAccessToken = jwtService.generateToken(oauth2User.getAttribute("email"), 1000 * 60 * 60); // 1 hour
         String jwtRefreshToken = jwtService.generateToken(oauth2User.getAttribute("email"), 1000 * 60 * 60 * 24 * 10); // 10 days
 
-        // Set cookies
-        Cookie accessCookie = new Cookie("access_token", jwtAccessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(true);
-        accessCookie.setPath("/");
-        accessCookie.setMaxAge(60 * 60);
-        response.addCookie(accessCookie);
+    // Set cookies
+    ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccessToken)
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofHours(1))
+            .build();
 
-        Cookie refreshCookie = new Cookie("refresh_token", jwtRefreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(10 * 24 * 60 * 60);
-        response.addCookie(refreshCookie);
-Cookie authenticated= new Cookie("authenticated","true");
-    authenticated.setPath("/");
-    response.addCookie(authenticated);
+// refresh token cookie
+    ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefreshToken)
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofDays(10))
+            .build();
 
-    Cookie userId= new Cookie("userId",createdUser.getUserId());
-    authenticated.setPath("/");
+// authenticated flag cookie (frontend-readable)
+    ResponseCookie authenticatedCookie = ResponseCookie.from("authenticated", "true")
+            .httpOnly(false)   // frontend can read this if needed
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofDays(10))
+            .build();
 
-    response.addCookie(userId);
+// userId cookie (frontend-readable)
+    ResponseCookie userIdCookie = ResponseCookie.from("userId", createdUser.getUserId())
+            .httpOnly(false)   // frontend can read this if needed
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofDays(10))
+            .build();
 
-
+// add all cookies to response headers
+    response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+    response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+    response.addHeader(HttpHeaders.SET_COOKIE, authenticatedCookie.toString());
+    response.addHeader(HttpHeaders.SET_COOKIE, userIdCookie.toString());
 response.sendRedirect(Frontend_URI+"home");
 
     }
