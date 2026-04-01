@@ -38,14 +38,16 @@ public class JwtFilter extends BasicAuthenticationFilter {
 //        System.out.println(Arrays.toString(cookies));
   String access_token= null;
         String refresh_token= null;
-  for(Cookie c:cookies){
-      if(c.getName().equals("access_token")){
-          access_token=c.getValue();
-      }
-      if(c.getName().equals("refresh_token")){
-          refresh_token=c.getValue();
-      }
-  }
+        if(cookies!=null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("access_token")) {
+                    access_token = c.getValue();
+                }
+                if (c.getName().equals("refresh_token")) {
+                    refresh_token = c.getValue();
+                }
+            }
+        }
         if (access_token == null) {
             if (refresh_token != null) {
 

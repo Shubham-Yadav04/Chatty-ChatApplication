@@ -74,5 +74,4 @@ Cookie authenticated= new Cookie("authenticated","true");
 response.sendRedirect(Frontend_URI+"home");
 
     }
-
 }
