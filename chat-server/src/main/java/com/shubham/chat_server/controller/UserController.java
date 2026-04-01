@@ -33,9 +33,11 @@ public class UserController {
     }
     @GetMapping("/authenticated/user")
     public User getAuthenticatedUser(@CookieValue("access_token") String token){
-        String email= jwtService.extractToken(token).getSubject();
         try {
-            return userService.getUserByEmail(email);
+            String email= jwtService.extractToken(token).getSubject();
+            User user = userService.getUserByEmail(email);
+            System.out.println(user.toString());
+            return user;
         }
         catch(Exception e){
             throw new RuntimeException(e.getMessage());
