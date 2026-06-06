@@ -4,6 +4,7 @@ package com.shubham.chat_server.controller;
 import com.shubham.chat_server.model.User;
 import com.shubham.chat_server.services.UserService;
 import com.shubham.chat_server.services.JwtService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,12 +46,12 @@ public ResponseEntity<?> checkAuth(HttpServletRequest request, HttpServletRespon
                 refreshToken=c.getValue();
             }
         }
-        if(!accessToken.equals("") && accessToken!=null){
+        if(!accessToken.isEmpty() && accessToken!=null){
            // inside the jwt filter i am checking the access token and all and adding that based on the refresh token now i just have to add the authenticated cookie in the request
 
 //             authenticated cookies should not be secure so that i can access that in frontend also
             Cookie authenticated = new Cookie("authenticated","true");
-            authenticated.setMaxAge(1*60*60);
+            authenticated.setMaxAge(60 * 60);
             authenticated.setPath("/");
             response.addCookie(authenticated);
             return new ResponseEntity<>("Authorized", HttpStatusCode.valueOf(200));
@@ -65,7 +66,8 @@ public ResponseEntity<?> checkAuth(HttpServletRequest request, HttpServletRespon
         if (jwtService.isTokenExpired(refreshToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid refresh token"));
         }
-        String newAccessToken = jwtService.generateToken(jwtService.extractToken(refreshToken).getSubject(), 15 * 60 * 1000);
+        Claims claim= jwtService.extractToken(refreshToken);
+        String newAccessToken = jwtService.generateToken(claim.getSubject(), claim.get("userId",String.class),15 * 60 * 1000);
         return ResponseEntity.ok(Map.of("access_token", newAccessToken));
     }
     @GetMapping("/user/logout")

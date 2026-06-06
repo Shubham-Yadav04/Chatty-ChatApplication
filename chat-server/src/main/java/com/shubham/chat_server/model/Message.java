@@ -1,14 +1,12 @@
 package com.shubham.chat_server.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.shubham.chat_server.Enum.MessageStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
-@Data
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +29,6 @@ public class Message {
     @JoinColumn(name = "chatroom_id", nullable = false)
     @JsonBackReference
     private ChatRoom chatroom;
-
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
 

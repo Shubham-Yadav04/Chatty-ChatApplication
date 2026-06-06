@@ -1,5 +1,6 @@
 package com.shubham.chat_server.services;
 
+import com.shubham.chat_server.DTO.MessageDTO;
 import com.shubham.chat_server.model.ChatRoom;
 import com.shubham.chat_server.model.Message;
 import com.shubham.chat_server.model.User;
@@ -24,10 +25,12 @@ public List<User> getChatRoomParticipants( String id){
 
    return chatRoom.getParticipants();
 }
-public List<Message> getAllChatRoomMessages( String id){
+public List<MessageDTO> getAllChatRoomMessages(String id){
     ChatRoom chatRoom= chatRoomRepository.findById(id).orElseGet(()->null);
     if(chatRoom==null) return  null;
-    return chatRoom.getMessages();
+    List<MessageDTO> messages= chatRoom.getMessages().stream().map(this::messageToDTOConvertor
+    ).toList();
+    return messages;
 }
 public Date getChatRoomCreationDate(String id){
     ChatRoom chatRoom= chatRoomRepository.findById(id).orElseGet(()->null);
@@ -58,6 +61,17 @@ public ChatRoom createChatRoom(ChatRoom chatRoom){
         System.out.println(ex.getMessage());
         return null;
     }
+}
+public MessageDTO messageToDTOConvertor(Message message){
+    return MessageDTO.builder().
+    receiverId(message.getReceiver().getUserId())
+            .roomId(message.getChatroom().getRoomId())
+            .content(message.getMessage())
+            .senderId(message.getSender().getUserId())
+            .receiverName(message.getReceiver().getUsername())
+            .senderName(message.getSender().getUsername())
+            .date(message.getDate())
+    .build();
 }
 public void saveChatroom(ChatRoom chatRoom){
     chatRoomRepository.save(chatRoom);

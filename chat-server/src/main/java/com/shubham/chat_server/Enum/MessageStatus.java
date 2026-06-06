@@ -1,8 +1,7 @@
-package com.shubham.chat_server.model;
+package com.shubham.chat_server.Enum;
 
 public enum MessageStatus {
     Read,
     Delivered,
-    Received,
 Sent
 }

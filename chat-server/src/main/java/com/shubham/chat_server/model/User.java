@@ -32,7 +32,6 @@ public class User {
     private String profilePic;
 @Column
 private String bio;
-    @Enumerated(EnumType.STRING)
-    private Status status;
+
 
 }

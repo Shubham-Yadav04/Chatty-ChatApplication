@@ -47,8 +47,8 @@ user.setProfilePic(oauth2User.getAttribute("picture"));
 User createdUser=userService.createUser(user);
 
 
-        String jwtAccessToken = jwtService.generateToken(oauth2User.getAttribute("email"), 1000 * 60 * 60); // 1 hour
-        String jwtRefreshToken = jwtService.generateToken(oauth2User.getAttribute("email"), 1000 * 60 * 60 * 24 * 10); // 10 days
+        String jwtAccessToken = jwtService.generateToken(oauth2User.getAttribute("email"), createdUser.getUserId(), 1000 * 60 * 60); // 1 hour
+        String jwtRefreshToken = jwtService.generateToken(oauth2User.getAttribute("email"), createdUser.getUserId(), 1000 * 60 * 60 * 24 * 10); // 10 days
 
     // Set cookies
     ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccessToken)

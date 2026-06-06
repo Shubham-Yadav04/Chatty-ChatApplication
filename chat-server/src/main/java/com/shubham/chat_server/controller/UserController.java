@@ -1,15 +1,13 @@
 package com.shubham.chat_server.controller;
 
-import com.cloudinary.Cloudinary;
 import com.shubham.chat_server.model.Message;
-import com.shubham.chat_server.model.MessageStatus;
-import com.shubham.chat_server.model.ReceivedMessage;
+import com.shubham.chat_server.Enum.MessageStatus;
+import com.shubham.chat_server.DTO.MessageDTO;
 import com.shubham.chat_server.model.User;
 import com.shubham.chat_server.services.MessageServices;
 import com.shubham.chat_server.services.UserService;
 import com.shubham.chat_server.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +34,6 @@ public class UserController {
         try {
             String email= jwtService.extractToken(token).getSubject();
             User user = userService.getUserByEmail(email);
-            System.out.println(user.toString());
             return user;
         }
         catch(Exception e){
@@ -50,8 +47,8 @@ public class UserController {
 
         if(createdUser!=null){
 
-        String accessToken=jwtService.generateToken(user.getEmail(),1000*60*60); // Access token
-        String refreshToken=jwtService.generateToken(user.getEmail(),1000*60*60*24*10); // Refresh token for 10 days
+        String accessToken=jwtService.generateToken(user.getEmail(), createdUser.getUserId(), 1000*60*60); // Access token
+        String refreshToken=jwtService.generateToken(user.getEmail(), createdUser.getUserId(), 1000*60*60*24*10); // Refresh token for 10 days
         ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
                 .httpOnly(true)
                 .secure(true)
@@ -92,13 +89,13 @@ public class UserController {
         }
         return new ResponseEntity<>("user not found", HttpStatus.NOT_FOUND);
     }
-    @PostMapping("/receivedMessage/{username}")
-    public ResponseEntity<?> receiveMessage(@PathVariable String username , @RequestBody ReceivedMessage receivedMessage){
+    @PostMapping("/messageDTO/{username}")
+    public ResponseEntity<?> receiveMessage(@PathVariable String username , @RequestBody MessageDTO messageDTO){
        Message message= new Message();
-       message.setSender(userService.getUser(receivedMessage.getSenderId()));
-       message.setReceiver(userService.getUser(receivedMessage.getReceiverId()));
-       message.setMessage(receivedMessage.getContent());
-       message.setStatus(MessageStatus.Received);
+       message.setSender(userService.getUser(messageDTO.getSenderId()));
+       message.setReceiver(userService.getUser(messageDTO.getReceiverId()));
+       message.setMessage(messageDTO.getContent());
+       message.setStatus(MessageStatus.Delivered);
        Message result=messageServices.saveMessage(message);
        if(result!=null){
 

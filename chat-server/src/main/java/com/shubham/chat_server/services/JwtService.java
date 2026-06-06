@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class JwtService {
@@ -19,10 +20,10 @@ public class JwtService {
     private final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
 
 
-    public String generateToken(String email,int time) {
+    public String generateToken(String email,String userId,int time) {
         String jwtToken = Jwts.builder()
                 .setSubject(email)
-
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + time))
                 .signWith(SECRET_KEY,SignatureAlgorithm.HS256)

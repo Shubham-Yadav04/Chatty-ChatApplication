@@ -1,13 +1,11 @@
 package com.shubham.chat_server.services;
 
-import com.shubham.chat_server.model.ChatRoom;
 import com.shubham.chat_server.model.Message;
-import com.shubham.chat_server.model.MessageStatus;
+import com.shubham.chat_server.Enum.MessageStatus;
 import com.shubham.chat_server.model.User;
 import com.shubham.chat_server.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Repository
 public class MessageServices {

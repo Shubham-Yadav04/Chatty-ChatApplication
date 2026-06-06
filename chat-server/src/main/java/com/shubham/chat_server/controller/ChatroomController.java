@@ -1,5 +1,6 @@
 package com.shubham.chat_server.controller;
 
+import com.shubham.chat_server.DTO.MessageDTO;
 import com.shubham.chat_server.model.*;
 import com.shubham.chat_server.services.ChatRoomServices;
 import com.shubham.chat_server.services.MessageServices;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -49,7 +49,7 @@ public class ChatroomController {
     public ResponseEntity<?> getChatroomMessages(@PathVariable String id){
 
         try{
-          List<Message> messages= chatRoomServices.getAllChatRoomMessages(id);
+          List<MessageDTO> messages= chatRoomServices.getAllChatRoomMessages(id);
             if(messages!=null){
                 return new ResponseEntity<>(messages,HttpStatus.OK);
             }
@@ -90,9 +90,9 @@ public class ChatroomController {
     @PostMapping("/create.room")
 
     // just need to create the room abd use the message to get the sender and receiver detail the message will be saved wgeb u will send the message in the topic
-    public ResponseEntity<?> createChatroom(@RequestBody ReceivedMessage receivedMessage){
-        String receiverId= receivedMessage.getReceiverId();
-        String senderId = receivedMessage.getSenderId();
+    public ResponseEntity<?> createChatroom(@RequestBody MessageDTO messageDTO){
+        String receiverId= messageDTO.getReceiverId();
+        String senderId = messageDTO.getSenderId();
         // find the user with respective usernames
         ChatRoom chatRoom= new ChatRoom();
         chatRoom.setRoomId("20"+senderId+"30"+receiverId);

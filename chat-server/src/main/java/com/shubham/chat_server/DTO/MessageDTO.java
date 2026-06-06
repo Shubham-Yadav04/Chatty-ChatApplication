@@ -1,12 +1,16 @@
-package com.shubham.chat_server.model;
+package com.shubham.chat_server.DTO;
 
 
 import lombok.*;
 
-@Data
+import java.util.Date;
+
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReceivedMessage {
+public class MessageDTO {
 
     private String receiverId;
     private String senderId;
@@ -14,4 +18,5 @@ public class ReceivedMessage {
     private String senderName;
     private String content;
     private String roomId;
+    private Date date;
 }

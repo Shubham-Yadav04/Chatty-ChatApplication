@@ -1,5 +1,6 @@
 package com.shubham.chat_server.filter;
 
+import com.shubham.chat_server.DTO.CustomPrincipal;
 import com.shubham.chat_server.services.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -51,9 +53,10 @@ public class JwtFilter extends BasicAuthenticationFilter {
         }
         if (access_token == null) {
             if (refresh_token != null) {
-
-                String email = jwtService.extractToken(refresh_token).getSubject();
-                String newAccess_token = jwtService.generateToken(email, 1000 * 60 * 60);
+                Claims claim= jwtService.extractToken(refresh_token);
+                String email = claim.getSubject();
+                String userId= claim.get("userId",String.class);
+                String newAccess_token = jwtService.generateToken(email, userId,1000 * 60 * 60);
                 ResponseCookie access_cookie =ResponseCookie.from("access_toke",newAccess_token)
                         .httpOnly(true)
                         .secure(true)
@@ -62,7 +65,9 @@ public class JwtFilter extends BasicAuthenticationFilter {
                         .maxAge(Duration.ofMinutes(60))
                         .build();
                 response.addHeader(HttpHeaders.SET_COOKIE,access_cookie.toString());
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, null);
+                CustomPrincipal principal= CustomPrincipal.builder().name(userId).email(email).build();
+
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principal, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         } else {
@@ -71,8 +76,9 @@ public class JwtFilter extends BasicAuthenticationFilter {
                 Claims claims = jwtService.extractToken(access_token);
 
                 String email = claims.getSubject();
-
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(email, null, null);
+String userId= claims.get("userId", String.class);
+CustomPrincipal principal= CustomPrincipal.builder().name(userId).email(email).build();
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(principal, null, null);
 
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
