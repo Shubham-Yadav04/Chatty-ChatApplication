@@ -34,7 +34,6 @@ if(user){
     chatroom
       ?chatroom.map((chatProfile, index) => {
         const freind= chatProfile.participants.filter((u)=>u.email!=user.email)[0]
-        console.log(freind)
         return(
         <Profiles key={index} username={freind.username}  roomId={chatProfile.id} msg={chatProfile.lastMessage.message} userId={freind.userId} profilePic={freind.profilePic}/>
         )

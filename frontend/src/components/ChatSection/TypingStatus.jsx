@@ -19,7 +19,6 @@ function AnimatedDots() {
           }}
           className="text-xs rounded-full bg-green-800 h-0.5 w-0.5 block mt-1"
         >
-        
         </motion.span>
       ))}
     </span>

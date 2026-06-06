@@ -21,13 +21,11 @@ function ChatSection() {
   const dispatch = useDispatch();
  
   const handleSendMessage = () => {
-    // Message send logic
     let receiverName = receiverProfile.username;
     const receiverId = receiverProfile.userId;
     const senderId = user.userId;
     const senderName = user.username;
     const content = message;
-    // console.log("sending the message")
     addMessages({ senderId, receiverId, senderName, receiverName, content });
     setEmojiSelected(false);
     setMessage(""); // clear the input field
@@ -40,28 +38,24 @@ function ChatSection() {
   };
 
   const [typers, setTypers] = useState([]);
-  // Scroll to the bottom whenever the messages change
-
   const { stompClient } = useWebSocket();
 
   useEffect(() => {
     if (!stompClient || !receiverProfile || !isChatOpened) return;
-    console.log(receiverProfile.roomId)
+  
     const subscription = stompClient.subscribe(
-      `/queue/typing-status/${receiverProfile.roomId}`,
+      `topic/typing-status/${receiverProfile.roomId}`,
       (msg) => {
         const data = JSON.parse(msg.body);
-        console.log(data.typing, data.typerName);
-        setTypers((prev) => {
-          if (data.typing) {
-            return !prev.includes(data.typerName) &&
-              user.username === data.typerName
-              ? prev
-              : [...prev, data.typerName];
-          } else {
-            return prev.filter((name) => name !== data.typerName);
-          }
-        });
+       setTypers((prev) => {
+  if (data.typing) {
+    if (data.typerName === user.username) return prev; // ignore self
+    if (prev.includes(data.typerName)) return prev;    // avoid duplicate
+    return [...prev, data.typerName];
+  } else {
+    return prev.filter((name) => name !== data.typerName);
+  }
+});
       }
     );
 
@@ -123,7 +117,6 @@ function ChatSection() {
                   <TypingStatus
                     typers={typers}
                     message={message}
-                   
                   />
                 </div>
               </div>

@@ -15,9 +15,9 @@ function Profiles(props) {
 setReceiverProfile(props)
 
 if(props.roomId && stompClient){
-    stompClient.subscribe(`/topic/chatroom/${props.roomId}`, (message) => {
+    stompClient.subscribe(`/user/queue/private-message`, (message) => {
+        console.log("received message ",message);
         const msg = JSON.parse(message.body);
-        console.log(`Received new message in room ${props.roomId}:`, msg);
         dispatch(addNewMessageToCurrentChatRoomMsg(msg));
       })
 }

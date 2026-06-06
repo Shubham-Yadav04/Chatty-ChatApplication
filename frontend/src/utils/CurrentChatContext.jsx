@@ -4,7 +4,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useWebSocket } from "./WebSocketContext";
-import {  setCurrentChatRoomMsg } from "./UserRedux/UserSlice";
+import {  setCurrentChatRoomMsg ,addNewMessageToCurrentChatRoomMsg} from "./UserRedux/UserSlice";
 
 
 const getCurrentChatMessages = async (chatroom) => {
@@ -36,13 +36,12 @@ export const CurrentChatProvider = ({ children }) => {
     return () => {
       cleanup();
     };
-  }, [receiverProfile, user]);
+  },  [dispatch, receiverProfile, user]);
 
   async function addMessages(msg) {
     // check whether the chatroom is new or it has already created if already created then the props will have roomId
     //  if room id is present than publish the message to the roomId route
-    console.log(receiverProfile);
- 
+msg={...msg, date: new Date().toISOString()}
     if (!receiverProfile.roomId) {
       // it will make a request to the server to create a new chatroom and then using the current messages data and give the roomId as a response
       // here we will get the roomId
@@ -51,15 +50,15 @@ export const CurrentChatProvider = ({ children }) => {
         msg,
         { withCredentials: true }
       );
-console.log("mssdamd")
+
       if (response.data) {
         // dispatch(fetchChatrooms(user.userId));
 
         const newRoomId = response.data;
         msg = { ...msg, roomId: newRoomId };
-        console.log(msg);
+        
         stompClient.publish({
-          destination: "/message/topic/chatroom",
+          destination: "/app/private-message",
           body: JSON.stringify(msg),
         });
         // Update chatroom with new roomId
@@ -67,15 +66,16 @@ console.log("mssdamd")
       }
       // store that roomId in the chatroom state
     } else {
-      console.log(receiverProfile.roomId);
       msg = { ...msg, roomId: receiverProfile.roomId };
       console.log(msg);
       stompClient.publish({
-        destination: "/message/topic/chatroom",
+        destination: "/app/private-message",
         body: JSON.stringify(msg),
       });
     }
-          
+    console.log("dispatching the new message ",msg);
+    
+    dispatch(addNewMessageToCurrentChatRoomMsg(msg));
   }
   const removeMessages = async (msg) => {
     dispatch(

@@ -23,19 +23,19 @@ function ChatMessages() {
                   <div
                     key={index}
                     className={`flex flex-col ${
-                      message.sender.userId === user.userId
+                      message.senderId === user.userId
                         ? "items-end"
                         : "items-start"
                     }`}
                   >
                     <div
                       className={`rounded-lg  my-1 w-fit h-fit px-3 py-1 ${
-                        message.sender.userId === user.userId
+                        message.senderId === user.userId
                           ? "bg-blue-500 text-white"
                           : "bg-gray-300 text-black"
                       } `}
                     >
-                      <p className="text-[12px] font-semibold">{message.message}
+                      <p className="text-[12px] font-semibold">{message.content}
                         <span className="text-[5px] font-bold text-gray-800 relative -bottom-1 right-0 ml-2">
                         {new Date(message.date).toLocaleTimeString([], {
                           hour: "2-digit",
@@ -46,7 +46,7 @@ function ChatMessages() {
                        
                     </div>
                     <p className="text-[8px] text-black font-semibold  w-fit">
-                      {message.sender.username}
+                      {message.senderName}
                      
                     </p>
                   </div>

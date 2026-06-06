@@ -9,7 +9,7 @@ export const getUserFromUserId = createAsyncThunk(
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}authenticated/user`, {
         withCredentials: true,
       });
-console.log(response.data)
+
       return response.data;
     } catch (error) {
 console.error("Error fetching user:", error);
@@ -52,7 +52,7 @@ const userSlice = createSlice({
       state.chatroom = [...state.chatroom, action.payload];
     },
     setIsChatOpened:(state,action)=>{
-      console.log(action.payload)
+     
       state.isChatOpened=action.payload
     },
     setCurrentChatRoom: (state, action) => {
