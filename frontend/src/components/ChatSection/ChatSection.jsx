@@ -19,8 +19,7 @@ function ChatSection() {
   const [isMenuClicked, setIsMenuClicked] = useState(false);
   const [emojiSelected, setEmojiSelected] = useState(false);
   const dispatch = useDispatch();
- 
-  const handleSendMessage = () => {
+  const handleSendMessage = async() => {
     let receiverName = receiverProfile.username;
     const receiverId = receiverProfile.userId;
     const senderId = user.userId;
@@ -44,7 +43,7 @@ function ChatSection() {
     if (!stompClient || !receiverProfile || !isChatOpened) return;
   
     const subscription = stompClient.subscribe(
-      `topic/typing-status/${receiverProfile.roomId}`,
+      `/topic/typing-status/${receiverProfile.roomId}`,
       (msg) => {
         const data = JSON.parse(msg.body);
        setTypers((prev) => {
@@ -76,9 +75,9 @@ function ChatSection() {
     >
       {receiverProfile ? (
         <>
-          <div className="chatBox h-[90%] w-[100%] flex flex-col relative">
-            {/* header section */}
-            <div className="header w-[100%] flex flex-row  z-40 bg-gray-200 h-[60px] items-center absolute inset-0">
+        <div className="w-full h-full flex flex-col items-center">
+          {/* header section */}
+          <div className="header w-[100%] flex flex-row  z-40 bg-gray-200 h-[60px] items-center ">
               <div className="h-full w-full flex flex-row justify-start items-start">
                 <div
                   className="flex items-start md:hidden justify-center h-full w-[50px] cursor-pointer hover:bg-gray-300 rounded-lg transition"
@@ -160,9 +159,9 @@ function ChatSection() {
                 )}
               </AnimatePresence>
             </div>
+     
             {/*  chat section  */}
             <ChatMessages/>
-          </div>
           <div className="w-full border-t  px-3 py-2 sm:px-4">
             <div className="relative mx-auto flex max-w-4xl items-end gap-2">
               {/* Textarea */}
@@ -254,6 +253,7 @@ function ChatSection() {
                 </svg>
               </button>
             </div>
+          </div>
           </div>
         </>
       ) : (

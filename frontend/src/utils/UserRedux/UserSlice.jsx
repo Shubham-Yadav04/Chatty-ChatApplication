@@ -18,30 +18,13 @@ console.error("Error fetching user:", error);
   }
 );
 
-export const fetchChatrooms = createAsyncThunk(
-  'user/fetchChatrooms',
-  async (userId, thunkAPI) => {
-    try {
-      
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}chatroom/user/${userId}`, {
-        withCredentials: true,
-      });
-      
-      return response.data; // should be a list of chatrooms
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
 
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
     user: null,
-   chatroom:[],
    currentChatRoom:null,
-   currentChatRoomMsg:[],
    isChatOpened:false,
   },
   reducers: {
@@ -58,12 +41,7 @@ const userSlice = createSlice({
     setCurrentChatRoom: (state, action) => {
       state.currentChatRoom = action.payload;
     },
-    setCurrentChatRoomMsg:(state,action)=>{
-state.currentChatRoomMsg= action.payload
-    },
-    addNewMessageToCurrentChatRoomMsg: (state, action) => {
-      state.currentChatRoomMsg.push(action.payload);
-    },
+
   },
   extraReducers: (builder) => {
     builder.addCase(getUserFromUserId.fulfilled, (state, action) => {
@@ -72,15 +50,10 @@ state.currentChatRoomMsg= action.payload
     .addCase(getUserFromUserId.rejected, (state, action) => {
       state.user = null;
     })
-    .addCase(fetchChatrooms.fulfilled, (state, action) => {
-      state.chatroom = action.payload;
-    })
-    .addCase(fetchChatrooms.rejected, (state, action) => {
-      state.chatroom = [];
-    });
+ 
   },
 });
 
 
-export const { setUser ,setChatroom,setCurrentChatRoom,setCurrentChatRoomMsg,addNewMessageToCurrentChatRoomMsg,isChatOpened,setIsChatOpened} = userSlice.actions;
+export const { setUser ,setChatroom,setCurrentChatRoom,isChatOpened,setIsChatOpened} = userSlice.actions;
 export default userSlice.reducer;

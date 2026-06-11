@@ -4,11 +4,13 @@ import { UserIcon } from 'lucide-react';
 
 import { useWebSocket } from '../utils/WebSocketContext.jsx';
 import { useDispatch } from 'react-redux';
-import { isChatOpened, setCurrentChatRoom } from '../utils/UserRedux/UserSlice.jsx';
-import { addNewMessageToCurrentChatRoomMsg,setIsChatOpened } from '../utils/UserRedux/UserSlice.jsx';
+import { setCurrentChatRoom } from '../utils/UserRedux/UserSlice.jsx';
+import {setIsChatOpened } from '../utils/UserRedux/UserSlice.jsx';
+import { useQueryClient } from '@tanstack/react-query';
 function Profiles(props) {
     const { setReceiverProfile } = useCurrentChat();
    const dispatch= useDispatch();
+   const queryClient= useQueryClient();
    const {stompClient}=useWebSocket()
     // const user = useSelector((state) => state.user).user;
     const handleProfileSelection=async(props)=>{
@@ -16,9 +18,11 @@ setReceiverProfile(props)
 
 if(props.roomId && stompClient){
     stompClient.subscribe(`/user/queue/private-message`, (message) => {
-        console.log("received message ",message);
         const msg = JSON.parse(message.body);
-        dispatch(addNewMessageToCurrentChatRoomMsg(msg));
+         queryClient.setQueryData(
+    ["chatroom", props.roomId],
+    (old = []) => [...old, msg]
+  );
       })
 }
 dispatch(setIsChatOpened(true));

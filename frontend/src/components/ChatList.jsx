@@ -1,20 +1,34 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Profiles from '././Profiles'
-import {motion} from 'motion/react'
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchChatrooms } from '../utils/UserRedux/UserSlice';
+
+import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import {motion} from "motion/react"
+import axios from 'axios';
 function ChatList() { 
-const user = useSelector(state=>state.user).user;
-const chatroom= useSelector(state=> state.user.chatroom);
+const user = useSelector(state=>state.user.user);
+const userId=user.userId;
+ const fetchChatrooms = async (userId) => {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}chatroom/user/${userId}`, {
+        withCredentials: true,
+      });
+      
+      return response.data; // should be a list of chatrooms
+    
+  }
 
-const dispatch= useDispatch();
+  console.log(user)
 
-useEffect(()=>{
-if(user){
-  dispatch(fetchChatrooms(user?.userId));
- 
-}
-},[user])
+const {isLoading,isError,data:chatList}=useQuery({
+  queryKey:["chatList",userId],
+  queryFn:()=>fetchChatrooms(userId),
+  enabled:!!userId,
+  refetchOnWindowFocus:false,
+  retry:2,
+  staleTime:Infinity
+})
+if(isLoading) return <div className='w-full h-full flex justify-center items-center '>  loading chats ...</div>
+if(isError) return <div className='w-full h-full flex justify-center items-center '> Error occured try again</div>
   return (
  
     !user?
@@ -31,8 +45,8 @@ if(user){
       <div className='h-fit py-4 overflow-y-auto overflow-x-hidden flex flex-col gap-3'>
         <Profiles username={"Myself"} msg={"hi billionaire what's the pln"} profilePic={user.profilePic} />
       {
-    chatroom
-      ?chatroom.map((chatProfile, index) => {
+    chatList
+      ?chatList.map((chatProfile, index) => {
         const freind= chatProfile.participants.filter((u)=>u.email!=user.email)[0]
         return(
         <Profiles key={index} username={freind.username}  roomId={chatProfile.id} msg={chatProfile.lastMessage.message} userId={freind.userId} profilePic={freind.profilePic}/>

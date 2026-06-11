@@ -1,42 +1,17 @@
 import { createContext } from "react";
-import { useState, useEffect } from "react";
+import { useState,  } from "react";
 import axios from "axios";
 import { useContext } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
 import { useWebSocket } from "./WebSocketContext";
-import {  setCurrentChatRoomMsg ,addNewMessageToCurrentChatRoomMsg} from "./UserRedux/UserSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
-
-const getCurrentChatMessages = async (chatroom) => {
-  const response = await axios.get(
-    `${import.meta.env.VITE_BACKEND_URI}chatroom/messages/${chatroom.roomId}`,
-    { withCredentials: true }
-  );
-  return response.data;
-};
 const CurrentChatContext = createContext();
 
 export const CurrentChatProvider = ({ children }) => {
-  const user = useSelector((state) => state.user.user);
   const { stompClient } = useWebSocket();
-
   const [receiverProfile, setReceiverProfile] = useState(null);
-
-  const dispatch = useDispatch();
-  const cleanup = () => {
-    dispatch(setCurrentChatRoomMsg([]));
-  };
-  useEffect(() => {
-    if (user && receiverProfile?.roomId) {
-      getCurrentChatMessages(receiverProfile).then((data) => {
-        console.log("dispatching the current chat data ",data);
-        dispatch(setCurrentChatRoomMsg(data));
-      });
-    }
-    return () => {
-      cleanup();
-    };
-  },  [dispatch, receiverProfile, user]);
+const queryClient= useQueryClient()
 
   async function addMessages(msg) {
     // check whether the chatroom is new or it has already created if already created then the props will have roomId
@@ -52,8 +27,6 @@ msg={...msg, date: new Date().toISOString()}
       );
 
       if (response.data) {
-        // dispatch(fetchChatrooms(user.userId));
-
         const newRoomId = response.data;
         msg = { ...msg, roomId: newRoomId };
         
@@ -73,20 +46,20 @@ msg={...msg, date: new Date().toISOString()}
         body: JSON.stringify(msg),
       });
     }
-    console.log("dispatching the new message ",msg);
-    
-    dispatch(addNewMessageToCurrentChatRoomMsg(msg));
+    // dispatch(addNewMessageToCurrentChatRoomMsg(msg));
+      queryClient.setQueriesData(
+       ["chatroom", receiverProfile.roomId],
+       (old)=>[...old,msg]
+    )
   }
   const removeMessages = async (msg) => {
-    dispatch(
-      setCurrentChatRoomMsg((prev) => prev.filter((m) => m.id !== msg.id))
-    );
+ 
 
     // now while delete messages the messages will only be removed for the client not for the server the message will still be in the server for the other person
     await axios.post(
       `${import.meta.env.VITE_BACKEND_URI}message/delete`,
       {
-        sender: user.username,
+        // sender: user.username,
         reciever: receiverProfile.username,
         message: msg.message,
       },

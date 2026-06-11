@@ -1,23 +1,45 @@
 import React from 'react'
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef,useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 function ChatMessages() {
+
     const chatEndRef = useRef(null);
-      const currentChatRoomMsg = useSelector(
-    (state) => state.user.currentChatRoomMsg
-  );
-  const user = useSelector((state) => state.user).user;
-    const sortedMessages = [...currentChatRoomMsg]?.sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
-  );
+  const getCurrentChatMessages = async (roomId) => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URI}chatroom/messages/${roomId}`,
+      { withCredentials: true }
+    );
+    return response.data;
+  };
+  const currentChatRoomId= useSelector(state=> state.user.currentChatRoom?.roomId)
+  console.log("roomId" , currentChatRoomId);
+  const {isLoading,isError,data:currentChatRoomMsg}=useQuery({
+    queryKey:["chatroom",currentChatRoomId], 
+    queryFn:({queryKey})=>{
+      const roomId= queryKey[1];
+      return getCurrentChatMessages(roomId)
+    
+    },
+    enabled: !!currentChatRoomId,
+    refetchOnWindowFocus:false,
+    staleTime:Infinity,
+    retry:2
+  })
+  const user = useSelector((state) => state.user.user);
+    const sortedMessages = useMemo(() => [...currentChatRoomMsg ?? []]?.sort(
+    (a, b) => new Date(a.date) - new Date(b.date) 
+  ), [currentChatRoomMsg])
       useEffect(() => {
         if (chatEndRef.current) {
           chatEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
-      }, [currentChatRoomMsg]); // This will trigger whenever currentChatRoomMsg changes
-    
+      }, [sortedMessages]); // This will trigger whenever currentChatRoomMsg changes
+      if(isLoading) return <div className='w-full flex items-center justify-center '>Loading ...</div>
+      if(isError) return  <div className='w-full flex items-center justify-center'> Error occured try again</div>
   return (
-    <div className="flex flex-col overflow-y-auto my-2 h-[90%] w-full relative top-[60px] custom-scroll p-4">
+    <div className="flex flex-col overflow-y-auto my-2 h-[90%] w-full  custom-scroll p-4">
               {sortedMessages && sortedMessages.length > 0 ? (
                 sortedMessages.map((message, index) => (
                   <div

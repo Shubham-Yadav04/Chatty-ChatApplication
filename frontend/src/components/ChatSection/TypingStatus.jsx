@@ -34,7 +34,7 @@ function TypingStatus({ typers, message }) {
       if (!stompClient) return;
       // console.log(stompClient)
       stompClient.publish({
-        destination: "/typing/queue",
+        destination: "/app/typing-status",
         body: JSON.stringify({
           typerName: user.username,
           chatroomId: receiverProfile.roomId,

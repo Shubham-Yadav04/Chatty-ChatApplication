@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import Profiles from './Profiles'
 import { useState } from 'react'
 import axios from 'axios'
-import {motion} from 'motion/react'
 import { useSelector } from 'react-redux'
 
 
@@ -10,7 +9,6 @@ import { useSelector } from 'react-redux'
 export default function AddFriends() {
     const [suggestions, setSuggestions] = useState([]);
     const [search, setSearch] = useState('');
-    const [timer, setTimer] = useState(null);
 
 const user= useSelector(state=>state.user.user)
     const getSearchResult = async (query) => {
@@ -30,16 +28,9 @@ const user= useSelector(state=>state.user.user)
             setSuggestions([]);  
             return;
         }
-
-        // Clear previous timer
-        if (timer) clearTimeout(timer);
-
         const newTimer = setTimeout(() => {
             getSearchResult(search);
         }, 500);
-
-        setTimer(newTimer);
-
         return () => clearTimeout(newTimer);
     }, [search]);
 
