@@ -1,7 +1,6 @@
 import React from 'react'
 import { useCurrentChat } from '../utils/CurrentChatContext.jsx';
 import { UserIcon } from 'lucide-react';
-
 import { useWebSocket } from '../utils/WebSocketContext.jsx';
 import { useDispatch } from 'react-redux';
 import { setCurrentChatRoom } from '../utils/UserRedux/UserSlice.jsx';
@@ -19,11 +18,17 @@ setReceiverProfile(props)
 if(props.roomId && stompClient){
     stompClient.subscribe(`/user/queue/private-message`, (message) => {
         const msg = JSON.parse(message.body);
+        msg.status="SEEN";
          queryClient.setQueryData(
     ["chatroom", props.roomId],
-    (old = []) => [...old, msg]
+   old => ({
+    ...old,
+    messages: [...old.messages, msg],
+    lastMessage: msg
+  })
   );
-      })
+  stompClient.publish("/app/ack-message-seen",msg.messageId)
+    })
 }
 dispatch(setIsChatOpened(true));
 dispatch(setCurrentChatRoom(props))

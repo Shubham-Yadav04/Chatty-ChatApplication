@@ -12,7 +12,6 @@ import { MessageIcon } from "./Svgs/MessageIcon";
 import { AddFriendsIcon } from "./Svgs/AddFriendsIcon";
 import { setUser } from "../utils/UserRedux/UserSlice";
 import { useWebSocket } from "../utils/WebSocketContext";
-// import SettingPage from './SettingPage';
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "motion/react";
 import axios from "axios";
@@ -23,8 +22,7 @@ function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isChatOpened = useSelector((state) => state.user.isChatOpened);
-
-  const { disconnectWebSocket } = useWebSocket();
+  const { disconnectWebSocket ,connectWebSocket} = useWebSocket();
   const Navigate = useNavigate();
   const user = useSelector((state) => state.user).user;
   const handleLogout = async () => {
@@ -39,13 +37,13 @@ function Home() {
       Navigate("/");
     }
   };
-  const { connectWebSocket } = useWebSocket();
+
   useEffect(() => {
     if (user != null) {
       setLoading(false);
-      connectWebSocket();
+      // connectWebSocket();
     }
-  }, [connectWebSocket, dispatch, navigate, user]);
+  }, [ dispatch, navigate, user]);
 
   return (
     <>

@@ -26,6 +26,7 @@ const userSlice = createSlice({
     user: null,
    currentChatRoom:null,
    isChatOpened:false,
+
   },
   reducers: {
     setUser: (state, action) => {
@@ -47,7 +48,7 @@ const userSlice = createSlice({
     builder.addCase(getUserFromUserId.fulfilled, (state, action) => {
       state.user = action.payload;
     })
-    .addCase(getUserFromUserId.rejected, (state, action) => {
+    .addCase(getUserFromUserId.rejected, (state) => {
       state.user = null;
     })
  
@@ -55,5 +56,5 @@ const userSlice = createSlice({
 });
 
 
-export const { setUser ,setChatroom,setCurrentChatRoom,isChatOpened,setIsChatOpened} = userSlice.actions;
+export const { setUser ,setCurrentChatRoom,isChatOpened,setIsChatOpened} = userSlice.actions;
 export default userSlice.reducer;

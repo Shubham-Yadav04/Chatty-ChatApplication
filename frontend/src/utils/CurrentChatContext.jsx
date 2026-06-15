@@ -11,6 +11,7 @@ const CurrentChatContext = createContext();
 export const CurrentChatProvider = ({ children }) => {
   const { stompClient } = useWebSocket();
   const [receiverProfile, setReceiverProfile] = useState(null);
+  
 const queryClient= useQueryClient()
 
   async function addMessages(msg) {
@@ -49,7 +50,11 @@ msg={...msg, date: new Date().toISOString()}
     // dispatch(addNewMessageToCurrentChatRoomMsg(msg));
       queryClient.setQueriesData(
        ["chatroom", receiverProfile.roomId],
-       (old)=>[...old,msg]
+       (old)=>({
+    ...old,
+    messages: [...old.messages,msg],
+    lastMessage: msg
+  })
     )
   }
   const removeMessages = async (msg) => {

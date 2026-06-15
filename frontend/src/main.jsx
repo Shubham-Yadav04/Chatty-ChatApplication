@@ -18,20 +18,16 @@ createRoot(document.getElementById('root')).render(
  
     <Router>
      
-        
+          <QueryClientProvider client={queryClient}>
       <Provider store={userStore}>
       <WebSocketProvider >
-         <QueryClientProvider client={queryClient}>
       <CurrentChatProvider>
-
     <App />
     <ReactQueryDevtools initialIsOpen={false} />
-
 </CurrentChatProvider>
-    </QueryClientProvider>
 </WebSocketProvider>
   </Provider>
-    
+      </QueryClientProvider>
     </Router>
  
 )

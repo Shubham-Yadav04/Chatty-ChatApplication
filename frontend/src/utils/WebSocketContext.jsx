@@ -1,17 +1,19 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Client } from "@stomp/stompjs";
 import SockJS from 'sockjs-client';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { addNewMessageToCurrentChatRoomMsg, fetchChatrooms } from './UserRedux/UserSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { useQueryClient } from '@tanstack/react-query';
 
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
-// const dispatch= useDispatch();
-  const connectWebSocket = () => {
+ const currentChatRoom= useSelector(state=> state.user.currentChatRoom)
+const dispatch= useDispatch();
+const queryClient=useQueryClient();
+  const connectWebSocket = useCallback(() => {
     if (connected || stompClient) return; 
 
     const socket = new SockJS(`${import.meta.env.VITE_BACKEND_URI}ws`);
@@ -36,10 +38,31 @@ export const WebSocketProvider = ({ children }) => {
     });
 
     client.activate();
-  
-    
-  };
+  }
+,[stompClient,connected]);
+useEffect(()=>{
 
+  if(stompClient===null && !connected) {
+    connectWebSocket();
+    return;
+  }
+ const messageSubscription=stompClient.subscribe("/user/queue/message",(msg)=>{
+          const data=JSON.parse(msg.body);
+          const roomId= data.chatRoomId;
+
+          if(roomId!==currentChatRoom.roomId){
+queryClient.setQueriesData(
+       ["chatroom",roomId],
+       (old)=>[...old,msg]
+    )
+            stompClient.publish("/app/ack-message-delivery",data.messageId);
+          }
+        });
+        return ()=>{
+          messageSubscription.unsubscribe();
+
+        }
+},[connected, currentChatRoom, dispatch, queryClient, stompClient])
   const disconnectWebSocket = () => {
     if (stompClient) {
       stompClient.deactivate();
@@ -47,13 +70,10 @@ export const WebSocketProvider = ({ children }) => {
       setConnected(false);
     }
   };
- 
-
   return (
-    <WebSocketContext.Provider value={{ stompClient, connected, connectWebSocket, disconnectWebSocket }}>
+    <WebSocketContext.Provider value={{ stompClient, connected, disconnectWebSocket }}>
       {children}
     </WebSocketContext.Provider>
   );
 };
-
 export const useWebSocket = () => useContext(WebSocketContext);

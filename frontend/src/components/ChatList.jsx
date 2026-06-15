@@ -16,7 +16,6 @@ const userId=user.userId;
       return response.data; // should be a list of chatrooms
     
   }
-
   console.log(user)
 
 const {isLoading,isError,data:chatList}=useQuery({
@@ -27,6 +26,10 @@ const {isLoading,isError,data:chatList}=useQuery({
   retry:2,
   staleTime:Infinity
 })
+// const { isLoading,isError, data:unreadMessages}=useQuery({
+//   queryKey:["unread-Message",userId],
+
+// })
 if(isLoading) return <div className='w-full h-full flex justify-center items-center '>  loading chats ...</div>
 if(isError) return <div className='w-full h-full flex justify-center items-center '> Error occured try again</div>
   return (
