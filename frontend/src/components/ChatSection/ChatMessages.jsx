@@ -1,12 +1,12 @@
 import React from 'react'
 import { useEffect, useRef,useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { current } from '@reduxjs/toolkit';
+
+
 function ChatMessages() {
     const chatEndRef = useRef(null);
-    const queryClient= useQueryClient();
   const getCurrentChatMessages = async (roomId) => {
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URI}chatroom/messages/${roomId}`,
@@ -17,18 +17,17 @@ function ChatMessages() {
     messages,
     lastMessage: messages.at(-1) ?? null,
     unseenMessages: messages.filter(
-      msg => msg.status === "DELIVERED"
+      msg => msg.status === "DELIVERED" || msg.status==="SENT"
     )
   };
   };
-  const currentChatRoomId= useSelector(state=> state.user.currentChatRoom?.roomId)
-  console.log("roomId" , currentChatRoomId);
+  const currentChatRoom= useSelector(state=> state.user.currentChatRoom)
+ const currentChatRoomId= currentChatRoom?.roomId;
   const {isLoading,isError,data:currentChatRoomMsg}=useQuery({
     queryKey:["chatroom",currentChatRoomId], 
     queryFn:({queryKey})=>{
       const roomId= queryKey[1];
       return getCurrentChatMessages(roomId)
-    
     },
     enabled: !!currentChatRoomId,
     refetchOnWindowFocus:false,
@@ -36,40 +35,14 @@ function ChatMessages() {
     retry:2,
   })
   const user = useSelector((state) => state.user.user);
-  const unseenMessage=currentChatRoomMsg.unseenMessages
-const markUnseenMessage=async()=>{
-  try{
-  const res= await axios.post(`${import.meta.env.VITE_BACKEND_URI}/mark-message-seen`,{
-    unseenMessage
-  },{
-    withCredentials:true
-  })
-}
-catch(e){
-  console.log(e.message);
-}
-}
-  const mutation= useMutation({
-    mutationFn:markUnseenMessage,
-    onSuccess:()=>{
-      // make the messages in the current chat room with this id as seen and remove the unseen messages make it empty
-      queryClient.setQueriesData(
-        ['chatroom',currentChatRoomId],
-        (old = []) =>
- old?.message.map(msg =>
-        msg.status === "DELIVERED"
-          ? { ...msg, status: "SEEN" }
-          : msg
-      )
-      )
-    }
-  })
- useEffect(() => {
-  if (unseenMessage.length > 0) {
-    mutation.mutate();
-  }
-}, [mutation, unseenMessage.length]);
-    const sortedMessages = useMemo(() => [...currentChatRoomMsg ?? []]?.sort(
+  // const unseenMessage=currentChatRoomMsg?.unseenMessages
+// useEffect(() => {
+//   if (!currentChatRoom?.roomId || unseenMessage?.length===0) return;
+//   mutation.mutate(unseenMessage);
+//   console.log("calling mutation");
+// }, [currentChatRoom?.roomId, mutation, unseenMessage?.length]);
+
+    const sortedMessages = useMemo(() => [...currentChatRoomMsg?.messages ?? []]?.sort(
     (a, b) => new Date(a.date) - new Date(b.date) 
   ), [currentChatRoomMsg])
       useEffect(() => {

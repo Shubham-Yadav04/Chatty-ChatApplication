@@ -3,6 +3,7 @@ import Profiles from './Profiles'
 import { useState } from 'react'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
+import {motion} from "motion/react"
 
 
 
@@ -58,7 +59,7 @@ const user= useSelector(state=>state.user.user)
             {suggestions.length > 0 ? (
                 suggestions.map((s, index) => (
                     s.email!==user.email ? <Profiles
-                        key={index}
+                        key={index+s.email}
                         username={s.username}
                         userId={s.userId}
                         profilePic={s.profilePic}

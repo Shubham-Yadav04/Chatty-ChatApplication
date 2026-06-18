@@ -70,6 +70,8 @@ public MessageDTO messageToDTOConvertor(Message message){
             .senderId(message.getSender().getUserId())
             .receiverName(message.getReceiver().getUsername())
             .senderName(message.getSender().getUsername())
+            .messageId(message.getMessageId())
+            .status(message.getStatus())
             .date(message.getDate())
     .build();
 }

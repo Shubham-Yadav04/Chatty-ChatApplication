@@ -1,9 +1,9 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext,useRef, useEffect, useState } from 'react';
 import { Client } from "@stomp/stompjs";
 import SockJS from 'sockjs-client';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 
 const WebSocketContext = createContext(null);
 
@@ -11,7 +11,6 @@ export const WebSocketProvider = ({ children }) => {
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
  const currentChatRoom= useSelector(state=> state.user.currentChatRoom)
-const dispatch= useDispatch();
 const queryClient=useQueryClient();
   const connectWebSocket = useCallback(() => {
     if (connected || stompClient) return; 
@@ -31,38 +30,94 @@ const queryClient=useQueryClient();
         setConnected(false);
         console.log(" Disconnected from WebSocket");
       },
-      
       onStompError: (frame) => {
         console.error("STOMP error:", frame);
       },
     });
-
     client.activate();
   }
 ,[stompClient,connected]);
+const currentRoomRef = useRef(null);
+useEffect(() => {
+   currentRoomRef.current = currentChatRoom;
+}, [currentChatRoom]);
 useEffect(()=>{
 
-  if(stompClient===null && !connected) {
-    connectWebSocket();
+  if(stompClient===null && !connected){
     return;
   }
  const messageSubscription=stompClient.subscribe("/user/queue/message",(msg)=>{
           const data=JSON.parse(msg.body);
-          const roomId= data.chatRoomId;
-
-          if(roomId!==currentChatRoom.roomId){
-queryClient.setQueriesData(
+          const roomId= data.roomId;
+          console.log(data)
+console.log(roomId , "   da  " , currentRoomRef.current.roomId)
+          if(roomId === currentRoomRef.current?.roomId){
+            data.status="SEEN"
+queryClient.setQueryData(
        ["chatroom",roomId],
-       (old)=>[...old,msg]
+       (old)=>({
+        ...old,
+        messages:[...(old?.messages ?? []),data],
+        lastMessage:data
+       })
     )
-            stompClient.publish("/app/ack-message-delivery",data.messageId);
+        stompClient.publish({
+        destination: "/app/ack-message-seen",
+        body: JSON.stringify({
+    messageId: data.messageId,
+    senderId: data.senderId,
+    status: "SEEN",
+    roomId
+  }),
+      });
           }
-        });
+          else {
+            data.status="DELIVERED"
+queryClient.setQueryData(
+       ["chatroom",roomId],
+       (old)=>({
+        ...old,
+        unseenMessages:[...(old?.unseenMessages ?? []),data],
+        lastMessage:data
+       })
+    )
+           stompClient.publish({
+        destination: "/app/ack-message-delivery",
+          body: JSON.stringify({
+    messageId: data.messageId,
+    senderId: data.senderId,
+    status: "DELIVERED",
+    roomId
+  }),
+          }
+        )
+        }});
+
+const ackSubscription= stompClient.subscribe("/user/queue/ack-message",(msg)=>{
+  const data = JSON.parse(msg.body);
+
+    queryClient.setQueryData(
+      ["chatroom", data.roomId],
+      (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          messages: old.messages.map((m) =>
+            m.messageId === data.messageId
+              ? { ...m, status: data.status }
+              : m
+          ),
+        };
+      }
+    );
+})
         return ()=>{
           messageSubscription.unsubscribe();
-
+          ackSubscription.unsubscribe()
         }
-},[connected, currentChatRoom, dispatch, queryClient, stompClient])
+},[connected, queryClient, stompClient])
+
+
   const disconnectWebSocket = () => {
     if (stompClient) {
       stompClient.deactivate();
@@ -70,6 +125,11 @@ queryClient.setQueriesData(
       setConnected(false);
     }
   };
+  useEffect(()=>{
+    connectWebSocket()
+  return ()=>disconnectWebSocket()
+  },[]
+  )
   return (
     <WebSocketContext.Provider value={{ stompClient, connected, disconnectWebSocket }}>
       {children}
