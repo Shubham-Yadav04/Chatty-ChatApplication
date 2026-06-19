@@ -17,7 +17,7 @@ function ChatMessages() {
     messages,
     lastMessage: messages.at(-1) ?? null,
     unseenMessages: messages.filter(
-      msg => msg.status === "DELIVERED" || msg.status==="SENT"
+      msg => (msg.senderId!== user?.userId )&& msg.status === "DELIVERED" || msg.status==="SENT"
     )
   };
   };

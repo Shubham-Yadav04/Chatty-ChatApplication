@@ -55,16 +55,15 @@ public class SocketController {
         messageDTO.setMessageId(result.getMessageId());
        // using this whenever i will fetch the chatroom i will also get the last message send in that chat room
        simpleMessagingTemplate.convertAndSendToUser(messageDTO.getReceiverId(),"/queue/message",messageDTO);
-//           simpleMessagingTemplate.convertAndSendToUser(messageDTO.getReceiverId(),"/queue/private-message", messageDTO);
-
     }
     @MessageMapping("/ack-message-delivery")
     public void messageDelivered(@Payload MessageAckDTO messageAckDTO){
         // mark the message status as Delivered
         try{
-            log.info("Message delivery acknowledgement {}",messageAckDTO.getMessageId());
+            log.info("Message delivery acknowledgement {}",messageAckDTO.getDate());
             messageServices.markMessageDelivery(messageAckDTO.getMessageId());
             System.out.println("message delivered");
+            simpleMessagingTemplate.convertAndSendToUser(messageAckDTO.getSenderId(),"/queue/message-ack",messageAckDTO);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -76,7 +75,7 @@ public class SocketController {
             log.info("message seen acknowledgement");
             messageServices.markMessageSeen(messageAck.getMessageId());
             System.out.println("message seen");
-            simpleMessagingTemplate.convertAndSendToUser(messageAck.getSenderId(),"/queue/message",messageAck);
+            simpleMessagingTemplate.convertAndSendToUser(messageAck.getSenderId(),"/queue/message-ack",messageAck);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }

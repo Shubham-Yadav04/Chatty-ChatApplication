@@ -48,6 +48,7 @@ useEffect(()=>{
   }
  const messageSubscription=stompClient.subscribe("/user/queue/message",(msg)=>{
           const data=JSON.parse(msg.body);
+          console.log(data)
           const roomId= data.roomId;
           console.log(data)
 console.log(roomId , "   da  " , currentRoomRef.current.roomId)
@@ -66,12 +67,14 @@ queryClient.setQueryData(
         body: JSON.stringify({
     messageId: data.messageId,
     senderId: data.senderId,
+    date:data.date,
     status: "SEEN",
     roomId
   }),
       });
           }
           else {
+            console.log("got a message delviery")
             data.status="DELIVERED"
 queryClient.setQueryData(
        ["chatroom",roomId],
@@ -87,15 +90,17 @@ queryClient.setQueryData(
     messageId: data.messageId,
     senderId: data.senderId,
     status: "DELIVERED",
+    date:data.date,
     roomId
   }),
           }
         )
         }});
 
-const ackSubscription= stompClient.subscribe("/user/queue/ack-message",(msg)=>{
+const ackSubscription= stompClient.subscribe("/user/queue/message-ack",(msg)=>{
   const data = JSON.parse(msg.body);
-
+console.log("got message ack for",data.status)
+console.log(data);
     queryClient.setQueryData(
       ["chatroom", data.roomId],
       (old) => {
@@ -103,7 +108,7 @@ const ackSubscription= stompClient.subscribe("/user/queue/ack-message",(msg)=>{
         return {
           ...old,
           messages: old.messages.map((m) =>
-            m.messageId === data.messageId
+             new Date(m.date) <= new Date(data.date)
               ? { ...m, status: data.status }
               : m
           ),
