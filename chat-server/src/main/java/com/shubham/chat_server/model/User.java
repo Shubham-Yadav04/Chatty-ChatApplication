@@ -14,24 +14,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "uk_user_email", columnList = "email", unique = true)
+})
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.UUID)
     private String userId;
-
     @Column(nullable = true)
     private String username;
     @Column(nullable = false , unique=true)
     private String email;
-
     @Column
     private String password;
-
     @Column
     private String profilePic;
 @Column
 private String bio;
-
-
 }

@@ -51,7 +51,7 @@ useEffect(()=>{
           console.log(data)
           const roomId= data.roomId;
           console.log(data)
-console.log(roomId , "   da  " , currentRoomRef.current.roomId)
+console.log(roomId , "   da  " , currentRoomRef?.current?.roomId)
           if(roomId === currentRoomRef.current?.roomId){
             data.status="SEEN"
 queryClient.setQueryData(
@@ -67,7 +67,7 @@ queryClient.setQueryData(
         body: JSON.stringify({
     messageId: data.messageId,
     senderId: data.senderId,
-    date:data.date,
+   clientTempId:data.clientTempId,
     status: "SEEN",
     roomId
   }),
@@ -87,10 +87,11 @@ queryClient.setQueryData(
            stompClient.publish({
         destination: "/app/ack-message-delivery",
           body: JSON.stringify({
+            // use the temperary clientTemp Id aas the acknowldgement flow
     messageId: data.messageId,
     senderId: data.senderId,
     status: "DELIVERED",
-    date:data.date,
+    clientTempId:data.clientTempId,
     roomId
   }),
           }
@@ -108,7 +109,7 @@ console.log(data);
         return {
           ...old,
           messages: old.messages.map((m) =>
-             new Date(m.date) <= new Date(data.date)
+            m.clientTempId===data.clientTempId
               ? { ...m, status: data.status }
               : m
           ),

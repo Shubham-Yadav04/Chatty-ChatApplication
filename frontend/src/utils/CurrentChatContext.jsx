@@ -17,7 +17,9 @@ const queryClient= useQueryClient()
   async function addMessages(msg) {
     // check whether the chatroom is new or it has already created if already created then the props will have roomId
     //  if room id is present than publish the message to the roomId route
-msg={...msg, date: new Date().toISOString(),status:"SENT"}
+msg={...msg,clientTempId:`${Date.now()}-${Math.random()
+  .toString(36)
+  .slice(2)}`,status:"SENT"}
     if (!receiverProfile.roomId) {
       // it will make a request to the server to create a new chatroom and then using the current messages data and give the roomId as a response
       // here we will get the roomId

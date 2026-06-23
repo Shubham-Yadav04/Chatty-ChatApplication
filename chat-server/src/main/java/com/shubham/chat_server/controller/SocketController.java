@@ -60,7 +60,7 @@ public class SocketController {
     public void messageDelivered(@Payload MessageAckDTO messageAckDTO){
         // mark the message status as Delivered
         try{
-            log.info("Message delivery acknowledgement {}",messageAckDTO.getDate());
+            log.info("Message delivery acknowledgement ");
             messageServices.markMessageDelivery(messageAckDTO.getMessageId());
             System.out.println("message delivered");
             simpleMessagingTemplate.convertAndSendToUser(messageAckDTO.getSenderId(),"/queue/message-ack",messageAckDTO);

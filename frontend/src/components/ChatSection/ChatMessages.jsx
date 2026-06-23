@@ -50,7 +50,7 @@ function ChatMessages() {
           chatEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, [sortedMessages]); // This will trigger whenever currentChatRoomMsg changes
-      if(isLoading) return <div className='w-full flex items-center justify-center '>Loading ...</div>
+      if(isLoading) return <div className='w-full flex items-center justify-center '>Loading ......</div>
       if(isError) return  <div className='w-full flex items-center justify-center'> Error occured try again</div>
   return (
     <div className="flex flex-col overflow-y-auto my-2 h-[90%] w-full  custom-scroll p-4">

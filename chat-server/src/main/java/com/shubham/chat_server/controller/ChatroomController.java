@@ -1,5 +1,6 @@
 package com.shubham.chat_server.controller;
 
+import com.shubham.chat_server.DTO.ChatRoomDTO;
 import com.shubham.chat_server.DTO.MessageDTO;
 import com.shubham.chat_server.model.*;
 import com.shubham.chat_server.services.ChatRoomServices;
@@ -31,13 +32,13 @@ public class ChatroomController {
 
     // used to get all the chatroom for the specific userId
     @GetMapping("/chatroom/user/{userId}")
-    public ResponseEntity<List<ChatRoom>> getUserChatRooms(@PathVariable String userId){
+    public ResponseEntity<List<ChatRoomDTO>> getUserChatRooms(@PathVariable String userId){
         try{
             User user = userService.getUser(userId);
             if(user!=null){
 
             // get the chatroom if user exists
-            List<ChatRoom> chatRooms= chatRoomServices.getUserChatRooms(userId);
+            List<ChatRoomDTO> chatRooms= chatRoomServices.getUserChatRooms(userId);
             return new ResponseEntity<>(chatRooms,HttpStatus.OK);
             }
         }

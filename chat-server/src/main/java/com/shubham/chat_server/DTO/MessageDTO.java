@@ -14,6 +14,7 @@ import java.util.Date;
 public class MessageDTO {
 private String messageId;
     private String receiverId;
+    private String clientTempId;
     private String senderId;
     private String receiverName;
     private String senderName;

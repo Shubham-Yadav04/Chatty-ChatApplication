@@ -52,7 +52,7 @@ function Profiles(props) {
           )
         }
       })
-    const handleProfileSelection=useCallback(async(props)=>{
+    const handleProfileSelection=(props)=>{
 setReceiverProfile(props)
 dispatch(setIsChatOpened(true));
 dispatch(setCurrentChatRoom(props))
@@ -65,7 +65,7 @@ const cachedMesages = queryClient.getQueryData([
       mutation.mutate(unseen);
     }
    }
-,[dispatch, mutation, queryClient, setReceiverProfile])
+
 // //    useEffect(()=>{
 // //     if(!props.roomId || !stompClient) return 
 // //    const subscription= stompClient.subscribe(`/user/queue/private-message/${props.roomId}`, (message) => {

@@ -29,7 +29,7 @@ if(isError) return <div className='w-full h-full flex justify-center items-cente
   return (
  
     !user?
-    <motion.div className='h-screen w-screen flex justify-center items-center text-black font-bold overflow-y-scroll'
+    <motion.div className='h-full w-full flex justify-center items-center text-black font-bold  overflow-hidden'
     initial={{opacity:0 ,x:-50}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-50}}
     
     > Loading ....</motion.div>
@@ -43,9 +43,9 @@ if(isError) return <div className='w-full h-full flex justify-center items-cente
         <Profiles username={"Myself"} msg={"hi billionaire what's the pln"} profilePic={user.profilePic} />
       {
     chatList.length>0?chatList.map((chatProfile, index) => {
-        const freind= chatProfile.participants?.filter((u)=>u.email!=user.email)[0]
+        const freind= chatProfile.participants?.filter((u)=>u.userId!=user.userId)[0]
         return(
-        <Profiles key={index} username={freind.username}  roomId={chatProfile.id} msg={chatProfile.lastMessage.message} userId={freind.userId} profilePic={freind.profilePic}/>
+        <Profiles key={index} username={freind.username}  roomId={chatProfile.id} msg={chatProfile.lastMessage} userId={freind.userId} profilePic={freind.profilePic}/>
         )
       } ):<></>
     }

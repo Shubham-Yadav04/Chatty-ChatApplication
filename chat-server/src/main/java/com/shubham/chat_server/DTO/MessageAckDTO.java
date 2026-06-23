@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class MessageAckDTO {
-   private Date date;
+   private String clientTempId;
    private String messageId;
     private String senderId;
     private MessageStatus status;
