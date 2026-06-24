@@ -45,7 +45,7 @@ if(isError) return <div className='w-full h-full flex justify-center items-cente
     chatList.length>0?chatList.map((chatProfile, index) => {
         const freind= chatProfile.participants?.filter((u)=>u.userId!=user.userId)[0]
         return(
-        <Profiles key={index} username={freind.username}  roomId={chatProfile.id} msg={chatProfile.lastMessage} userId={freind.userId} profilePic={freind.profilePic}/>
+        <Profiles key={index} username={freind.username} unreadMessageCount={chatProfile.unreadMessageCount} roomId={chatProfile.roomId} msg={chatProfile.lastMessage} userId={freind.userId} profilePic={freind.profilePic}/>
         )
       } ):<></>
     }

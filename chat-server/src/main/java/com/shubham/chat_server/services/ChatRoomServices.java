@@ -62,7 +62,7 @@ public List<ChatRoomDTO> getUserChatRooms(String userId) {
 
        // 3. Map everything into your clean DTO layout
        return rooms.stream().map(room -> new ChatRoomDTO(
-               room.getRoomId(),
+               room.getId(),
                room.getIsGroupChat(),
                room.getCreatedAt(),
                // @BatchSize handles this perfectly on the first pass loop!

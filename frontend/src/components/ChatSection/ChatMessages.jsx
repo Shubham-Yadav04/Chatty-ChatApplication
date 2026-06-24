@@ -1,13 +1,14 @@
 import React from 'react'
 import { useEffect, useRef,useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-
+import { useMutation } from '@tanstack/react-query';
 
 function ChatMessages() {
     const chatEndRef = useRef(null);
   const getCurrentChatMessages = async (roomId) => {
+    
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URI}chatroom/messages/${roomId}`,
       { withCredentials: true }
@@ -15,18 +16,19 @@ function ChatMessages() {
     const messages = response.data;
   return {
     messages,
-    lastMessage: messages.at(-1) ?? null,
     unseenMessages: messages.filter(
       msg => (msg.senderId!== user?.userId )&& msg.status === "DELIVERED" || msg.status==="SENT"
     )
   };
   };
-  const currentChatRoom= useSelector(state=> state.user.currentChatRoom)
+  const currentChatRoom= useSelector(state=> state.user?.currentChatRoom)
  const currentChatRoomId= currentChatRoom?.roomId;
+const queryClient =useQueryClient()
   const {isLoading,isError,data:currentChatRoomMsg}=useQuery({
     queryKey:["chatroom",currentChatRoomId], 
     queryFn:({queryKey})=>{
       const roomId= queryKey[1];
+      console.log(roomId)
       return getCurrentChatMessages(roomId)
     },
     enabled: !!currentChatRoomId,
@@ -35,16 +37,63 @@ function ChatMessages() {
     retry:2,
   })
   const user = useSelector((state) => state.user.user);
-  // const unseenMessage=currentChatRoomMsg?.unseenMessages
-// useEffect(() => {
-//   if (!currentChatRoom?.roomId || unseenMessage?.length===0) return;
-//   mutation.mutate(unseenMessage);
-//   console.log("calling mutation");
-// }, [currentChatRoom?.roomId, mutation, unseenMessage?.length]);
+ const cachedMesages = queryClient.getQueryData([
+      "chatroom",
+      currentChatRoomId,
+    ]);
 
+ const markUnseenMessage=async(messages)=>{
+      try{
+        if(!messages ||messages.length===0)return;
+        console.log("mark unseen as seen ", messages)
+       await axios.post(`${import.meta.env.VITE_BACKEND_URI}mark-message-seen`,
+        messages
+      ,{
+        withCredentials:true
+      })
+    }
+    catch(e){
+      console.log(e.message);
+    }
+    }
+      const mutation= useMutation({
+        mutationFn:markUnseenMessage,
+        onSuccess:()=>{
+          // make the messages in the current chat room with this id as seen and remove the unseen messages make it empty
+          queryClient.setQueryData(
+            ['chatroom',currentChatRoomId],
+             (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          messages: old.messages.map(msg =>
+            msg.senderId !== user?.userId &&
+            (msg.status === "DELIVERED" || msg.status === "SENT")
+              ? { ...msg, status: "SEEN" }
+              : msg
+          ),
+          unseenMessages:[]
+        };
+      }
+          )
+        }
+      })
     const sortedMessages = useMemo(() => [...currentChatRoomMsg?.messages ?? []]?.sort(
     (a, b) => new Date(a.date) - new Date(b.date) 
   ), [currentChatRoomMsg])
+ useEffect(() => {
+  const unseen = cachedMesages?.unseenMessages ?? [];
+
+  if (unseen.length > 0) {
+    mutation.mutate(unseen);
+  }
+   queryClient.setQueryData(
+        ["chatList",user?.userId],
+        (old)=>[
+          ...old.map(msg=> msg.roomId===currentChatRoomId?{...msg,unreadMessageCount:0}:msg)
+        ]
+      )
+}, [cachedMesages, currentChatRoomId, mutation, queryClient, user?.userId]);
       useEffect(() => {
         if (chatEndRef.current) {
           chatEndRef.current.scrollIntoView({ behavior: "smooth" });

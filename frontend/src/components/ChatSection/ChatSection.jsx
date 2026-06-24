@@ -20,14 +20,15 @@ const {setReceiverProfile} = useCurrentChat();
   const [emojiSelected, setEmojiSelected] = useState(false);
   const dispatch = useDispatch();
   const handleSendMessage = async() => {
-    let receiverName = receiverProfile.username;
-    const receiverId = receiverProfile.userId;
+    let receiverName = receiverProfile?.username;
+    const receiverId = receiverProfile?.userId;
     const senderId = user.userId;
     const senderName = user.username;
     const content = message;
     addMessages({ senderId, receiverId, senderName, receiverName, content });
     setEmojiSelected(false);
     setMessage(""); // clear the input field
+  
   };
 
   // Sort messages in descending order based on the date & time which causes the in the last of the array and then at rendering it will be at the bottom of the chat section

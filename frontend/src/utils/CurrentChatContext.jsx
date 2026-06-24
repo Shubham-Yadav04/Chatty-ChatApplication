@@ -5,13 +5,14 @@ import { useContext } from "react";
 
 import { useWebSocket } from "./WebSocketContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 
 const CurrentChatContext = createContext();
 
 export const CurrentChatProvider = ({ children }) => {
   const { stompClient } = useWebSocket();
   const [receiverProfile, setReceiverProfile] = useState(null);
-  
+  const userId= useSelector(state=>state.user.user?.userId)
 const queryClient= useQueryClient()
 
   async function addMessages(msg) {
@@ -19,7 +20,9 @@ const queryClient= useQueryClient()
     //  if room id is present than publish the message to the roomId route
 msg={...msg,clientTempId:`${Date.now()}-${Math.random()
   .toString(36)
-  .slice(2)}`,status:"SENT"}
+  .slice(2)}`,status:"SENT",
+  date:new Date()
+}
     if (!receiverProfile.roomId) {
       // it will make a request to the server to create a new chatroom and then using the current messages data and give the roomId as a response
       // here we will get the roomId
@@ -54,8 +57,20 @@ msg={...msg,clientTempId:`${Date.now()}-${Math.random()
        (old)=>({
    ...(old || {}),
   messages: [...(old?.messages || []), msg],
-  lastMessage: msg,
+  lastMessage: msg.message,
   })
+    )
+
+    queryClient.setQueryData(
+      ["chatList",userId],
+        (old)=>[
+          ...old.map(chatMsg=> chatMsg.roomId===receiverProfile.roomId?{
+            ...chatMsg,
+          lastMessage:msg.content
+          }
+          :chatMsg
+        )
+        ]
     )
   }
   const removeMessages = async (msg) => {

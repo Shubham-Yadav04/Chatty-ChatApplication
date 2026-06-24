@@ -11,6 +11,7 @@ export const WebSocketProvider = ({ children }) => {
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
  const currentChatRoom= useSelector(state=> state.user.currentChatRoom)
+ const user= useSelector(state=> state.user?.user)
 const queryClient=useQueryClient();
   const connectWebSocket = useCallback(() => {
     if (connected || stompClient) return; 
@@ -38,9 +39,13 @@ const queryClient=useQueryClient();
   }
 ,[stompClient,connected]);
 const currentRoomRef = useRef(null);
+const userRef=useRef(null);
 useEffect(() => {
    currentRoomRef.current = currentChatRoom;
 }, [currentChatRoom]);
+useEffect(() => {
+   userRef.current = user;
+}, [user]);
 useEffect(()=>{
 
   if(stompClient===null && !connected){
@@ -48,10 +53,8 @@ useEffect(()=>{
   }
  const messageSubscription=stompClient.subscribe("/user/queue/message",(msg)=>{
           const data=JSON.parse(msg.body);
-          console.log(data)
+  
           const roomId= data.roomId;
-          console.log(data)
-console.log(roomId , "   da  " , currentRoomRef?.current?.roomId)
           if(roomId === currentRoomRef.current?.roomId){
             data.status="SEEN"
 queryClient.setQueryData(
@@ -59,8 +62,20 @@ queryClient.setQueryData(
        (old)=>({
         ...old,
         messages:[...(old?.messages ?? []),data],
-        lastMessage:data
        })
+    )
+
+    // set last message for the sender also 
+    queryClient.setQueryData(
+      ["chatList",userRef.current?.userId],
+        (old)=>[
+          ...old.map(msg=> msg.roomId===data.roomId?{
+            ...msg,
+          lastMessage:data.content
+          }
+          :msg
+        )
+        ]
     )
         stompClient.publish({
         destination: "/app/ack-message-seen",
@@ -74,15 +89,27 @@ queryClient.setQueryData(
       });
           }
           else {
-            console.log("got a message delviery")
+            console.log("got a message delviery",data)
             data.status="DELIVERED"
 queryClient.setQueryData(
        ["chatroom",roomId],
        (old)=>({
         ...old,
         unseenMessages:[...(old?.unseenMessages ?? []),data],
-        lastMessage:data
+    
        })
+    )
+    queryClient.setQueryData(
+      ["chatList",userRef.current?.userId],
+        (old)=>[
+          ...old.map(msg=> msg.roomId===data.roomId?{
+            ...msg,
+          unreadMessageCount:(msg.unreadMeassgeCount || 0) + 1,
+          lastMessage:data.content
+          }
+          :msg
+        )
+        ]
     )
            stompClient.publish({
         destination: "/app/ack-message-delivery",

@@ -8,62 +8,19 @@ import {setIsChatOpened } from '../utils/UserRedux/UserSlice.jsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { useCallback} from 'react';
 import { useSelector } from 'react-redux';
 function Profiles(props) {
     const { setReceiverProfile } = useCurrentChat();
     const queryClient=useQueryClient()
    const dispatch= useDispatch();
-    const currentChatRoomId = useSelector((state) => state.user?.currentChatRoom?.roomId)
     const userId = useSelector((state) => state.user?.user?.userId)
-    const markUnseenMessage=async(messages)=>{
-      try{
-        if(!messages ||messages.length===0)return;
-        console.log("mark unseen as seen ", messages)
-       await axios.post(`${import.meta.env.VITE_BACKEND_URI}mark-message-seen`,
-        messages
-      ,{
-        withCredentials:true
-      })
-    }
-    catch(e){
-      console.log(e.message);
-    }
-    }
-      const mutation= useMutation({
-        mutationFn:markUnseenMessage,
-        onSuccess:()=>{
-          // make the messages in the current chat room with this id as seen and remove the unseen messages make it empty
-          queryClient.setQueryData(
-            ['chatroom',currentChatRoomId],
-             (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          messages: old.messages.map(msg =>
-            msg.senderId !== userId &&
-            (msg.status === "DELIVERED" || msg.status === "SENT")
-              ? { ...msg, status: "SEEN" }
-              : msg
-          ),
-          unseenMessages:[]
-        };
-      }
-          )
-        }
-      })
+   
+  
     const handleProfileSelection=(props)=>{
 setReceiverProfile(props)
 dispatch(setIsChatOpened(true));
 dispatch(setCurrentChatRoom(props))
-const cachedMesages = queryClient.getQueryData([
-      "chatroom",
-      props.roomId,
-    ]);
-    const unseen = cachedMesages?.unseenMessages ?? [];
-    if (unseen.length > 0) {
-      mutation.mutate(unseen);
-    }
+   
    }
 
 // //    useEffect(()=>{
@@ -95,7 +52,7 @@ const cachedMesages = queryClient.getQueryData([
 // }
 //    },[props.roomId, queryClient, stompClient])
   return (
-    <div className='w-full h-[50px] flex p-4 md:px-4  justify-start gap-3 hover:cursor-pointer' onClick={() => handleProfileSelection(props)}>
+    <div className='w-full h-[50px] flex p-4 md:px-4  justify-start items-center  gap-3 hover:cursor-pointer ' onClick={() => handleProfileSelection(props)}>
         <div className='rounded-full  md:h-[40px] md:w-[40px] w-[50px] h-[50px] flex items-center justify-center border-2 border-gray-300  overflow-hidden '>
           { props.profilePic? <img
           src={props.profilePic}
@@ -106,7 +63,8 @@ const cachedMesages = queryClient.getQueryData([
         <UserIcon size={40} className="text-gray-500" />
     }
         </div>
-        <div className=' flex flex-col px-1 w-[80%] h-fit justify-start'>
+        <div className=' flex flex-col px-1 w-[80%] h-fit justify-start relative'>
+          
             <h1 className='text-base md:text-sm font-semibold text-black'>{
                 props.username? props.username: "ContactName"
                 }</h1>
@@ -117,6 +75,9 @@ const cachedMesages = queryClient.getQueryData([
                 }
       
             </p>
+            {
+             props?.unreadMessageCount>0 && <span className='absolute bottom-2  right-5 rounded-full p-1 font-bold text-[10px] flex items-center bg-green-400 w-[15px] h-[15px] text-white '>{props.unreadMessageCount}</span>
+            }
         </div>
       
     </div>
