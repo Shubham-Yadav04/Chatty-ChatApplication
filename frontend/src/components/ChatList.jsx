@@ -1,6 +1,5 @@
 import React from 'react'
 import Profiles from '././Profiles'
-
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import {motion} from "motion/react"
@@ -12,14 +11,11 @@ const userId=user.userId;
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}chatroom/user/${userId}`, {
         withCredentials: true,
       });
-      
+      console.log(response.data);
       return response.data; // should be a list of chatrooms
-    
   }
 
-  console.log(user)
-
-const {isLoading,isError,data:chatList}=useQuery({
+const {isLoading,isError,data:chatList=[]}=useQuery({
   queryKey:["chatList",userId],
   queryFn:()=>fetchChatrooms(userId),
   enabled:!!userId,
@@ -27,12 +23,13 @@ const {isLoading,isError,data:chatList}=useQuery({
   retry:2,
   staleTime:Infinity
 })
+
 if(isLoading) return <div className='w-full h-full flex justify-center items-center '>  loading chats ...</div>
 if(isError) return <div className='w-full h-full flex justify-center items-center '> Error occured try again</div>
   return (
  
     !user?
-    <motion.div className='h-screen w-screen flex justify-center items-center text-black font-bold overflow-y-scroll'
+    <motion.div className='h-full w-full flex justify-center items-center text-black font-bold  overflow-hidden'
     initial={{opacity:0 ,x:-50}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-50}}
     
     > Loading ....</motion.div>
@@ -45,11 +42,10 @@ if(isError) return <div className='w-full h-full flex justify-center items-cente
       <div className='h-fit py-4 overflow-y-auto overflow-x-hidden flex flex-col gap-3'>
         <Profiles username={"Myself"} msg={"hi billionaire what's the pln"} profilePic={user.profilePic} />
       {
-    chatList
-      ?chatList.map((chatProfile, index) => {
-        const freind= chatProfile.participants.filter((u)=>u.email!=user.email)[0]
+    chatList.length>0?chatList.map((chatProfile, index) => {
+        const freind= chatProfile.participants?.filter((u)=>u.userId!=user.userId)[0]
         return(
-        <Profiles key={index} username={freind.username}  roomId={chatProfile.id} msg={chatProfile.lastMessage.message} userId={freind.userId} profilePic={freind.profilePic}/>
+        <Profiles key={index} username={freind.username} unreadMessageCount={chatProfile.unreadMessageCount} roomId={chatProfile.roomId} msg={chatProfile.lastMessage} userId={freind.userId} profilePic={freind.profilePic}/>
         )
       } ):<></>
     }

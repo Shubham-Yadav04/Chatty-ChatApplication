@@ -95,7 +95,7 @@ public class UserController {
        message.setSender(userService.getUser(messageDTO.getSenderId()));
        message.setReceiver(userService.getUser(messageDTO.getReceiverId()));
        message.setMessage(messageDTO.getContent());
-       message.setStatus(MessageStatus.Delivered);
+       message.setStatus(MessageStatus.DELIVERED);
        Message result=messageServices.saveMessage(message);
        if(result!=null){
 

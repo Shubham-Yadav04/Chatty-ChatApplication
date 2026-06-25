@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +23,7 @@ public class ChatRoom {
 // this for the public use user can share this roomId to any one to join the chat room
 private String roomId;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "chatroom_participants",
             joinColumns = @JoinColumn(name = "chatroom_id"),
@@ -32,12 +33,13 @@ private List<User> participants = new ArrayList<>();
 @Column
 private Boolean isGroupChat=false;
 
-@OneToMany(mappedBy = "chatroom")
+@OneToMany(mappedBy = "chatroom",fetch = FetchType.LAZY)
 @JsonManagedReference
+@BatchSize(size = 20)
     private List<Message> messages;
 @Temporal(TemporalType.TIMESTAMP)
     @Column
     private Date createdAt= new Date();
-@OneToOne
+@OneToOne(fetch = FetchType.LAZY)
 private Message lastMessage;
 }

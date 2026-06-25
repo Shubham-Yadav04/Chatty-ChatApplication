@@ -11,6 +11,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "messages", indexes = {
+        // Composite index for optimized unread count aggregation queries
+        @Index(name = "idx_msg_unread_calc", columnList = "chatroom_id, status, sender_id")
+
+})
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

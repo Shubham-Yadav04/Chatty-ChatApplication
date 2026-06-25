@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useCurrentChat } from "../../utils/CurrentChatContext";
 import { UserIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { setIsChatOpened } from "../../utils/UserRedux/UserSlice.jsx";
+import { setIsChatOpened ,setCurrentChatRoom} from "../../utils/UserRedux/UserSlice.jsx";
 import { useDispatch } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
 import { useWebSocket } from "@/utils/WebSocketContext";
@@ -14,26 +14,29 @@ function ChatSection() {
   const [message, setMessage] = useState("");
   const user = useSelector((state) => state.user).user;
   const { receiverProfile, addMessages } = useCurrentChat();
-
+const {setReceiverProfile} = useCurrentChat();
   const isChatOpened = useSelector((state) => state.user.isChatOpened);
   const [isMenuClicked, setIsMenuClicked] = useState(false);
   const [emojiSelected, setEmojiSelected] = useState(false);
   const dispatch = useDispatch();
   const handleSendMessage = async() => {
-    let receiverName = receiverProfile.username;
-    const receiverId = receiverProfile.userId;
+    let receiverName = receiverProfile?.username;
+    const receiverId = receiverProfile?.userId;
     const senderId = user.userId;
     const senderName = user.username;
     const content = message;
     addMessages({ senderId, receiverId, senderName, receiverName, content });
     setEmojiSelected(false);
     setMessage(""); // clear the input field
+  
   };
 
   // Sort messages in descending order based on the date & time which causes the in the last of the array and then at rendering it will be at the bottom of the chat section
 
   const handleBack = () => {
+    dispatch(setCurrentChatRoom(null))
     dispatch(setIsChatOpened(false));
+    setReceiverProfile(null)
   };
 
   const [typers, setTypers] = useState([]);

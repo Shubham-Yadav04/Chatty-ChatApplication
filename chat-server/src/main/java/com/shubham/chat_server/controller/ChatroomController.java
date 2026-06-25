@@ -1,5 +1,6 @@
 package com.shubham.chat_server.controller;
 
+import com.shubham.chat_server.DTO.ChatRoomDTO;
 import com.shubham.chat_server.DTO.MessageDTO;
 import com.shubham.chat_server.model.*;
 import com.shubham.chat_server.services.ChatRoomServices;
@@ -7,6 +8,7 @@ import com.shubham.chat_server.services.MessageServices;
 import com.shubham.chat_server.services.UserService;
 import com.shubham.chat_server.services.JwtService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 public class ChatroomController {
     @Autowired
@@ -29,13 +32,13 @@ public class ChatroomController {
 
     // used to get all the chatroom for the specific userId
     @GetMapping("/chatroom/user/{userId}")
-    public ResponseEntity<List<ChatRoom>> getUserChatRooms(@PathVariable String userId){
+    public ResponseEntity<List<ChatRoomDTO>> getUserChatRooms(@PathVariable String userId){
         try{
             User user = userService.getUser(userId);
             if(user!=null){
 
             // get the chatroom if user exists
-            List<ChatRoom> chatRooms= chatRoomServices.getUserChatRooms(userId);
+            List<ChatRoomDTO> chatRooms= chatRoomServices.getUserChatRooms(userId);
             return new ResponseEntity<>(chatRooms,HttpStatus.OK);
             }
         }
@@ -116,5 +119,14 @@ System.out.println(e.getMessage());
             }
         }
         return new ResponseEntity<>("BAD_REQUEST",HttpStatus.BAD_REQUEST);
+    }
+    @PostMapping("/mark-message-seen")
+    public void markMessageSeen(@RequestBody List<MessageDTO> messageDTOS){
+        try{
+            log.info("message called for seen {}",messageDTOS.size() );
+            messageServices.markMessageSeen(messageDTOS);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
