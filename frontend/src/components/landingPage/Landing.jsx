@@ -13,7 +13,7 @@ function Landing() {
 //     }
   return (
     <div className="h-fit w-full flex-col items-center neon:bg-primary dark:bg-[#000]">
-        {/* <Navbar/> */}
+        <Navbar/>
         <HeroSection/>
         <DummyChat/>
     <Info/>
