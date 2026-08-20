@@ -3,12 +3,10 @@ import { motion } from 'motion/react';
 
 const initialChatMessages = [
   { id: 1, text: "Hey! Ready to go over the project details?", sender: "other", time: "10:00 AM", avatar: "AJ" },
-  { id: 2, text: "Absolutely! Give me one minute to login using my Gmail. 😊", sender: "user", time: "10:01 AM", avatar: "ME" },
+  { id: 2, text: "Absolutely! Give me one minute to login using my Gmail", sender: "user", time: "10:01 AM", avatar: "ME" },
   { id: 3, text: "No rush. I'll drop the documents here.", sender: "other", time: "10:02 AM", avatar: "AJ" },
-  { id: 4, text: "Awesome. Just joined and found your message! 🚀", sender: "user", time: "10:04 AM", avatar: "ME" },
-  { id: 5, text: "Here's the zip file with all the assets you need.", sender: "other", time: "10:05 AM", file: true, avatar: "AJ" },
-  { id: 6, text: "Got it! No video calls today right?", sender: "user", time: "10:07 AM", avatar: "ME" },
-  { id: 7, text: "Nope, just purely chat and file sharing. Simple and focused! ✨", sender: "other", time: "10:08 AM", avatar: "AJ" },
+  { id: 4, text: "Awesome. Just joined and found your message", sender: "user", time: "10:04 AM", avatar: "ME" },
+  { id: 5, text: "Connect at 6:00 PM", sender: "other", time: "10:02 AM", avatar: "AJ" }
 ];
 
 export default function DummyChat() {
@@ -50,7 +48,7 @@ export default function DummyChat() {
   if (!mounted) return null;
 
   return (
-    <div className="w-full h-fit bg-[#000] flex flex-col justify-center items-center overflow-hidden relative border-t border-neutral-900 py-10 px-4">
+    <div className="w-full h-fit bg-[#000] flex flex-col justify-center items-center overflow-hidden relative  py-10 px-4">
         
 
       <div 
@@ -92,7 +90,7 @@ export default function DummyChat() {
                     </div>
                 </div>
               ) : (
-                <p className="text-sm md:text-base leading-relaxed tracking-wide font-medium">{msg.text}</p>
+                <p className="text-sm md:text-sm leading-relaxed tracking-wide font-medium">{msg.text}</p>
               )}
               <span className={`text-[10px] sm:text-xs mt-2 block font-medium tracking-wider ${msg.sender === 'user' ? 'text-blue-200 text-right' : 'text-neutral-500 text-right'}`}>{msg.time}</span>
             </div>
